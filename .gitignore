@@ -1,3 +1,3 @@
 
-sim/
+sim/*
 !sim/Makefile

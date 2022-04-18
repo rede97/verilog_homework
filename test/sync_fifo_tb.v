@@ -44,6 +44,7 @@ module sync_fifo_tb;
             repeat (n) begin
                 @(posedge clk);
             end
+            #1;
         end
     endtask
 
