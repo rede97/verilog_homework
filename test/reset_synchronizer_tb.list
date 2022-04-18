@@ -1,0 +1,2 @@
+../rtl/reset_synchronizer.v
+../test/reset_synchronizer_tb.v
