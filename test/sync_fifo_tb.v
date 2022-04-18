@@ -131,9 +131,7 @@ module sync_fifo_tb;
         pop(temp_data);
         pop(temp_data);
 
-        repeat (8) begin
-            @(posedge clk);
-        end
+        wait_clk(8);
         $finish;
     end
 
