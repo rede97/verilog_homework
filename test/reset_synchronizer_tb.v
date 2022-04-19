@@ -10,10 +10,10 @@ module reset_synchronizer_tb;
         end
     end
 
-    reset_synchronize dut (
-        .clk(clk),
-        .reset_async(async_rst_n),
-        .reset_sync(sync_rst_n)
+    reset_synchronizer dut (
+        .clk_i(clk),
+        .rstn_unsync_i(async_rst_n),
+        .rstn_sync_o(sync_rst_n)
     );
 
     initial begin

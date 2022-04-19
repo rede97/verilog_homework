@@ -9,7 +9,7 @@ module sync_fifo_tb;
     reg [DATA_WIDTH-1:0] wr_data;
 
     reg rd_en;
-    wire rd_data_vaild;
+    wire rd_data_valid;
     wire [DATA_WIDTH-1:0] rd_data;
 
     wire [$clog2(DATA_DEPTH):0] elem_cnt;
@@ -20,12 +20,12 @@ module sync_fifo_tb;
         .DATA_WIDTH(DATA_WIDTH),
         .DATA_DEPTH(DATA_DEPTH)
     ) dut (
-        .clk(clk),
-        .rst_n(rst_n),
+        .clk_i(clk),
+        .rstn_i(rst_n),
         .wr_en_i(wr_en),
         .wr_data_i(wr_data),
         .rd_en_i(rd_en),
-        .rd_data_vaild_o(rd_data_vaild),
+        .rd_data_valid_o(rd_data_valid),
         .rd_data_o(rd_data),
         .elem_cnt_o(elem_cnt),
         .full_o(full),
@@ -78,11 +78,11 @@ module sync_fifo_tb;
             if (!empty) begin
                 rd_en = 1;
                 wait_clk(1);
-                if (rd_data_vaild) begin
+                if (rd_data_valid) begin
                     data = rd_data;
                     $display("Pop: %d", data);
                 end else begin
-                    $display("Pop: data invaild");
+                    $display("Pop: data invalid");
                 end
                 rd_en = 0;
                 disable pop;

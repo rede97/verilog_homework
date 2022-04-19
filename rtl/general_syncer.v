@@ -1,5 +1,5 @@
 module general_syncer (
-    input  clk,
+    input  clk_i,
     input  reset_async,
     output reset_sync
 );
