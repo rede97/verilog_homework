@@ -1,7 +1,7 @@
 module reset_synchronizer (
-    input  clk_i,
-    input  rstn_unsync_i,
-    output rstn_sync_o
+    input  wire clk_i,
+    input  wire rstn_unsync_i,
+    output wire rstn_sync_o
 );
     reg [1:0] reset_dff;
     assign rstn_sync_o = reset_dff[1];

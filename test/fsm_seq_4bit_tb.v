@@ -1,4 +1,4 @@
-module fsm_tb;
+module fsm_seq_4bit_tb;
     reg clk;
     reg rst_n;
 
@@ -11,7 +11,7 @@ module fsm_tb;
 
     localparam EXPECT_CONTINUOUS_FOUNT_CNT = 3;
 
-    fsm dut (
+    fsm_seq_4bit dut (
         .clk_i  (clk),
         .rst_n_i(rst_n),
         .data_i (data),

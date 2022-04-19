@@ -5,25 +5,25 @@ module sync_fifo #(
     parameter CNT_WIDTH  = $clog2(DATA_DEPTH)
 ) (
     // system and reset
-    input wire clk_i,
-    input wire rstn_i,
+    input  wire                  clk_i,
+    input  wire                  rstn_i,
     // write interface
-    input wire wr_en_i,
-    input wire [DATA_WIDTH-1:0] wr_data_i,
+    input  wire                  wr_en_i,
+    input  wire [DATA_WIDTH-1:0] wr_data_i,
     // read interface
-    input wire rd_en_i,
-    output reg rd_data_valid_o,
-    output reg [DATA_WIDTH-1:0] rd_data_o,
+    input  wire                  rd_en_i,
+    output reg                   rd_data_valid_o,
+    output reg  [DATA_WIDTH-1:0] rd_data_o,
     // flags
-    output wire empty_o,
-    output wire full_o,
-    output reg [CNT_WIDTH:0] elem_cnt_o
+    output wire                  empty_o,
+    output wire                  full_o,
+    output reg  [   CNT_WIDTH:0] elem_cnt_o
 );
-    reg [CNT_WIDTH-1:0] wr_ptr;
-    reg [CNT_WIDTH-1:0] rd_ptr;
-    reg [DATA_WIDTH-1:0] ram[0:DATA_DEPTH-1];
-    wire wr_valid;
-    wire rd_valid;
+    reg  [ CNT_WIDTH-1:0] wr_ptr;
+    reg  [ CNT_WIDTH-1:0] rd_ptr;
+    reg  [DATA_WIDTH-1:0] ram      [0:DATA_DEPTH-1];
+    wire                  wr_valid;
+    wire                  rd_valid;
 
     assign full_o   = elem_cnt_o == DATA_DEPTH;
     assign empty_o  = elem_cnt_o == 0;

@@ -1,8 +1,8 @@
-module fsm (
-    input clk_i,
-    input rst_n_i,
-    input wire [3:0] data_i,
-    output reg found_o
+module fsm_seq_4bit (
+    input  wire       clk_i,
+    input  wire       rst_n_i,
+    input  wire [3:0] data_i, // Data input
+    output reg        found_o // Detected output
 );
 
     // Define STATE
