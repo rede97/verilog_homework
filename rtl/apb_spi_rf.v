@@ -15,6 +15,8 @@ module apb_spi_rf (
     input  wire [31:0] pwdata_i,
     output wire [31:0] prdata_o,
     output wire        pready_o,
+    output wire        spi_clk_div_vld_o,
+    output wire [15:0] spi_clk_div_o,
     input  wire        eot_i,                 // end of transmit/receive
     output wire [31:0] stream_data_tx_o,      // tx data stream input
     output wire        stream_data_tx_vld_o,  // tx data stream valid
@@ -24,7 +26,7 @@ module apb_spi_rf (
     output wire        stream_data_rx_rdy_o   // rx data stream ready
 );
 
-    reg  [31:0] regs          [0:5];
+    reg  [31:0] regs             [0:5];
     reg  [31:0] reg_data_out;
     wire [31:0] reg_ctrl_next;
     wire [ 3:0] cmd;
@@ -33,30 +35,36 @@ module apb_spi_rf (
     wire [15:0] wdata;
     wire        rd_en;
     wire        wr_en;
+    wire        reg_ctrl_tx_flag;
+    wire        reg_ctrl_rx_flag;
     // pready is 1
-    assign pready_o = 1'b1;
+    assign pready_o             = 1'b1;
 
     // write enable
-    assign wr_en = psel_i & penable_i & pwrite_i;
+    assign wr_en                = psel_i & penable_i & pwrite_i;
     // read enable
-    assign rd_en = psel_i & penable_i & (~pwrite_i);
+    assign rd_en                = psel_i & penable_i & (~pwrite_i);
 
     // stream tx and rx is controled by CTRL-reg
     assign stream_data_tx_vld_o = regs[`CTRL][0];
     assign stream_data_rx_rdy_o = regs[`CTRL][1];
 
     // CTRL-reg next
-    assign reg_ctrl_next = {30'h0, eot_i ? 1'b0 : regs[`CTRL][1], eot_i ? 1'b0 : regs[`CTRL][0]};
+    assign spi_clk_div_vld_o    = 1'b1;
+    assign spi_clk_div_o        = regs[`CTRL][31:16] == 0 ? 16'd1 : regs[`CTRL][31:16];
+    assign reg_ctrl_tx_flag     = eot_i ? 1'b0 : regs[`CTRL][0];  // Tx flag of CTRL-reg
+    assign reg_ctrl_rx_flag     = eot_i ? 1'b0 : regs[`CTRL][1];  // Rx flag of CTRL-reg
+    assign reg_ctrl_next        = {spi_clk_div_o, 14'd0, reg_ctrl_rx_flag, reg_ctrl_tx_flag};
 
     // output of stream data tx
-    assign cmd = regs[`CMD][3:0];
-    assign addr = regs[`ADDR][3:0];
-    assign len = regs[`LEN][7:0];
-    assign wdata = regs[`WDATA][15:0];
-    assign stream_data_tx_o = {cmd, addr, len, wdata};
+    assign cmd                  = regs[`CMD][3:0];
+    assign addr                 = regs[`ADDR][3:0];
+    assign len                  = regs[`LEN][7:0];
+    assign wdata                = regs[`WDATA][15:0];
+    assign stream_data_tx_o     = {cmd, addr, len, wdata};
 
     // Read data from APB-registers
-    assign prdata_o = rd_en ? reg_data_out : 32'h0;
+    assign prdata_o             = rd_en ? reg_data_out : 32'h0;
 
     // update APB-registers
     always @(posedge pclk_i or negedge rst_n_i) begin

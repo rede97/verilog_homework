@@ -120,10 +120,10 @@ module apb_spi_tb;
         apb_write(`ADDR, 'b1011);  // write ADDR
         apb_write(`LEN, 'b00010000);  // write ADDR
         apb_write(`WDATA, 'ha001);  // write WDATA
-        apb_write(`CTRL, 'b01);  // write CTRL to start transfer
+        apb_write(`CTRL, 32'h0004_0001);  // write clock divider and tx flag CTRL
         apb_read(`CTRL, tmp_data);
         // polling ctrl registers while peripheral not busy
-        while (tmp_data != 32'h0) begin
+        while ((tmp_data & 'b11) != 32'h0) begin
             apb_read(`CTRL, tmp_data);
         end
         aclk_wait(10);
@@ -133,8 +133,7 @@ module apb_spi_tb;
         apb_write(`ADDR, 'b1011);  // write ADDR
         apb_write(`LEN, 'b00010000);  // write ADDR
         apb_write(`WDATA, 'h0000);  // write WDATA
-        apb_write(`CTRL, 'b11);  // write CTRL to start transfer and receive
-
+        apb_write(`CTRL, 32'h0004_0003);  // write clock divider and tx/rx flag CTRL
         wait (apb_spi_tb.dut.spi_master.spi_rx_en == 1);
         repeat (16) begin
             @(negedge spi_clk) begin
@@ -144,7 +143,7 @@ module apb_spi_tb;
 
         apb_read(`CTRL, tmp_data);
         // polling ctrl registers while peripheral not busy
-        while (tmp_data != 32'h0) begin
+        while ((tmp_data & 'b11) != 32'h0) begin
             apb_read(`CTRL, tmp_data);
         end
 

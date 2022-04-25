@@ -22,13 +22,15 @@ module apb_spi_master (
     wire [31:0] spi_stream_rx;
     wire        spi_stream_rx_rdy;
     wire        spi_stream_rx_vld;
+    wire        spi_clk_div_vld;
+    wire [15:0] spi_clk_div;
 
     // SPI master controller
     spi_master_controller spi_master (
         .clk_i               (pclk_i),
         .rst_n_i             (rst_n_i),
-        .spi_clk_div_i       (8'd4),
-        .spi_clk_div_vld_i   (1'b1),
+        .spi_clk_div_i       (spi_clk_div),
+        .spi_clk_div_vld_i   (spi_clk_div_vld),
         .stream_data_tx_i    (stream_data_tx),
         .stream_data_tx_vld_i(stream_data_tx_vld),
         .stream_data_tx_rdy_o(stream_data_tx_rdy),
@@ -53,6 +55,8 @@ module apb_spi_master (
         .pwdata_i            (pwdata_i),
         .prdata_o            (prdata_o),
         .pready_o            (pready_o),
+        .spi_clk_div_vld_o   (spi_clk_div_vld),
+        .spi_clk_div_o       (spi_clk_div),
         .eot_i               (eot),                 // end of transmit/receive
         .stream_data_tx_o    (stream_data_tx),      // tx data stream input
         .stream_data_tx_vld_o(stream_data_tx_vld),  // tx data stream valid
