@@ -14,10 +14,10 @@ VERDI_TARGETS = $(addsuffix .vd, $(T))
 VCS = vcs -full64 -LDFLAGS -Wl,--no-as-needed +nospeicy +notimingcheck
 
 print:
-	@echo "Build Targtes $(TESTBENCHES)"
-	@echo "RUN CLI Targets $(RUN_TARGETS)"
-	@echo "RUN DVE Targtes $(RUN_GUI_TARGETS)"
-	@echo "VERDI Targets $(VERDI_TARGETS)"
+	@echo "Build Targtes [$(TESTBENCHES)]"
+	@echo "RUN CLI Targets [$(RUN_TARGETS)]"
+	@echo "RUN DVE Targtes [$(RUN_GUI_TARGETS)]"
+	@echo "VERDI Targets [$(VERDI_TARGETS)]"
 
 %_tb:
 	$(VCS) -timescale=1ns/100ps -nc -debug_acc+all -debug_region+cell+encrypt +lint=TFIPC-L -fsdb -l comp_log -f $(TEST_DIR)/$@.list -top $@ -o $@
