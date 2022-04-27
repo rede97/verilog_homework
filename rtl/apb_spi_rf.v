@@ -51,7 +51,7 @@ module apb_spi_rf (
 
     // CTRL-reg next
     assign spi_clk_div_vld_o    = 1'b1;
-    assign spi_clk_div_o        = regs[`CTRL][31:16] == 0 ? 16'd1 : regs[`CTRL][31:16];
+    assign spi_clk_div_o        = regs[`CTRL][31:16];
     assign reg_ctrl_tx_flag     = eot_i ? 1'b0 : regs[`CTRL][0];  // Tx flag of CTRL-reg
     assign reg_ctrl_rx_flag     = eot_i ? 1'b0 : regs[`CTRL][1];  // Rx flag of CTRL-reg
     assign reg_ctrl_next        = {spi_clk_div_o, 14'd0, reg_ctrl_rx_flag, reg_ctrl_tx_flag};
@@ -64,7 +64,7 @@ module apb_spi_rf (
     assign stream_data_tx_o     = {cmd, addr, len, wdata};
 
     // Read data from APB-registers
-    assign prdata_o             = rd_en ? reg_data_out : 32'h0;
+    assign prdata_o             = reg_data_out;
 
     // update APB-registers
     always @(posedge pclk_i or negedge rst_n_i) begin
@@ -90,7 +90,9 @@ module apb_spi_rf (
                         regs[`WDATA] <= pwdata_i;
                     end
                     `CTRL: begin
-                        regs[`CTRL] <= pwdata_i;
+                        regs[`CTRL] <= {
+                            pwdata_i[31:16] < 4 ? 16'd4 : pwdata_i[31:16], pwdata_i[15:0]
+                        };
                     end
                     default: begin
                         regs[`CMD]   <= regs[`CMD];
@@ -121,30 +123,34 @@ module apb_spi_rf (
         end
     end
 
-    always @(*) begin
-        case (paddr_i)
-            `CMD: begin
-                reg_data_out = regs[`CMD];
-            end
-            `ADDR: begin
-                reg_data_out = regs[`ADDR];
-            end
-            `LEN: begin
-                reg_data_out = regs[`LEN];
-            end
-            `WDATA: begin
-                reg_data_out = regs[`WDATA];
-            end
-            `RDATA: begin
-                reg_data_out = regs[`RDATA];
-            end
-            `CTRL: begin
-                reg_data_out = regs[`CTRL];
-            end
-            default: begin
-                reg_data_out = 32'h0;
-            end
-        endcase
+    always @(posedge pclk_i or negedge rst_n_i) begin
+        if (!rst_n_i) begin
+            reg_data_out <= 32'h0;
+        end else begin
+            case (paddr_i)
+                `CMD: begin
+                    reg_data_out <= regs[`CMD];
+                end
+                `ADDR: begin
+                    reg_data_out <= regs[`ADDR];
+                end
+                `LEN: begin
+                    reg_data_out <= regs[`LEN];
+                end
+                `WDATA: begin
+                    reg_data_out <= regs[`WDATA];
+                end
+                `RDATA: begin
+                    reg_data_out <= regs[`RDATA];
+                end
+                `CTRL: begin
+                    reg_data_out <= regs[`CTRL];
+                end
+                default: begin
+                    reg_data_out <= 32'h0;
+                end
+            endcase
+        end
     end
 
 
