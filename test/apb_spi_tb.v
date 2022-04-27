@@ -45,6 +45,12 @@ module apb_spi_tb;
         end
     end
 
+    // initial begin
+    //     $dumpfile("apb_spi_tb.vcd");  //生成的vcd文件名称
+    //     $dumpvars(0, apb_spi_tb);  //tb模块名称
+    //     $timeformat(-9, 2, "ns", 4);
+    // end
+
     task aclk_wait(input integer n);
         begin
             repeat (n) begin
@@ -116,7 +122,7 @@ module apb_spi_tb;
         tmp_data = 0;
         wait (rst_n == 1);
         aclk_wait(1);
-        apb_write(`CMD, 'b1010);  // write Read-CMD
+        apb_write(`CMD, 'b1011);  // write Read-CMD
         apb_write(`ADDR, 'b1011);  // write ADDR
         apb_write(`LEN, 'b00010000);  // write ADDR
         apb_write(`WDATA, 'ha001);  // write WDATA
@@ -129,7 +135,7 @@ module apb_spi_tb;
         aclk_wait(10);
         $display("Write finish");
 
-        apb_write(`CMD, 'b1011);  // write Read-CMD
+        apb_write(`CMD, 'b1010);  // write Read-CMD
         apb_write(`ADDR, 'b1011);  // write ADDR
         apb_write(`LEN, 'b00010000);  // write ADDR
         apb_write(`WDATA, 'h0000);  // write WDATA

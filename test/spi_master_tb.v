@@ -44,6 +44,12 @@ module spi_master_tb;
         end
     end
 
+    // initial begin
+    //     $dumpfile("spi_master_tb.vcd");  //生成的vcd文件名称
+    //     $dumpvars(0, spi_master_tb);  //tb模块名称
+    //     $timeformat(-9, 2, "ns", 4);
+    // end
+
     task clk_wait(input integer n);
         begin
             repeat (n) begin
@@ -67,7 +73,7 @@ module spi_master_tb;
         stream_data_tx_vld = 0;
         spi_data_rx_rdy = 0;
         wait (rst_n == 1);
-        stream_data_tx = {4'b1010, 4'b1011, 8'b00010000, 16'ha001};
+        stream_data_tx = {4'b1011, 4'b1011, 8'b00010000, 16'ha001};
         stream_data_tx_vld = 1;
         while (!eot) begin
             clk_wait(1);
@@ -77,7 +83,7 @@ module spi_master_tb;
 
         stream_data_tx_vld = 1;
         spi_data_rx_rdy = 1;
-        stream_data_tx = {4'b1011, 4'b1011, 8'b00010000, 16'h1515};
+        stream_data_tx = {4'b1010, 4'b1011, 8'b00010000, 16'ha001};
         wait (spi_master_tb.spi_master_dut.spi_rx_en == 1);
         repeat (16) begin
             @(negedge spi_clk) begin

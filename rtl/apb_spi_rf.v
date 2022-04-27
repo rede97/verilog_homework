@@ -127,29 +127,31 @@ module apb_spi_rf (
         if (!rst_n_i) begin
             reg_data_out <= 32'h0;
         end else begin
-            case (paddr_i)
-                `CMD: begin
-                    reg_data_out <= regs[`CMD];
-                end
-                `ADDR: begin
-                    reg_data_out <= regs[`ADDR];
-                end
-                `LEN: begin
-                    reg_data_out <= regs[`LEN];
-                end
-                `WDATA: begin
-                    reg_data_out <= regs[`WDATA];
-                end
-                `RDATA: begin
-                    reg_data_out <= regs[`RDATA];
-                end
-                `CTRL: begin
-                    reg_data_out <= regs[`CTRL];
-                end
-                default: begin
-                    reg_data_out <= 32'h0;
-                end
-            endcase
+            if (psel_i & (~pwrite_i)) begin
+                case (paddr_i)
+                    `CMD: begin
+                        reg_data_out <= regs[`CMD];
+                    end
+                    `ADDR: begin
+                        reg_data_out <= regs[`ADDR];
+                    end
+                    `LEN: begin
+                        reg_data_out <= regs[`LEN];
+                    end
+                    `WDATA: begin
+                        reg_data_out <= regs[`WDATA];
+                    end
+                    `RDATA: begin
+                        reg_data_out <= regs[`RDATA];
+                    end
+                    `CTRL: begin
+                        reg_data_out <= regs[`CTRL];
+                    end
+                    default: begin
+                        reg_data_out <= 32'h0;
+                    end
+                endcase
+            end
         end
     end
 

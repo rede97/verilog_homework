@@ -15,7 +15,7 @@ module spi_master_controller (
     input  wire        spi_sdi_i,             // SPI MISO
     output reg         eot_o                  // end of transmit
 );
-    localparam ReadReq = 4'b1011, WriteReq = 4'b1010;
+    localparam ReadReq = 4'b1010, WriteReq = 4'b1011;
     localparam IDLE = 3'd0, CMD = 1, ADDR = 2, DUMMY = 3, TX = 4, RX = 5, EOT = 6;
     reg  [ 2:0] state;
     reg  [ 2:0] state_next;
@@ -52,6 +52,7 @@ module spi_master_controller (
     reg         tx_len_vld;
     reg  [15:0] rx_len;
     reg         rx_len_vld;
+    reg         rx_wait;
     wire        tx_done;
     wire        rx_done;
     wire        spi_rd_seq;  // flag: spi read
@@ -72,13 +73,13 @@ module spi_master_controller (
     assign state_is_tx    = state == TX;
     assign state_is_rx    = state == RX;
     assign state_is_eot   = state == EOT;
-    assign state_go_cmd   = state_is_idle && stream_data_tx_vld_i && (spi_rd_seq | spi_wr_seq);
-    assign state_go_addr  = state_is_cmd && tx_done;
-    assign state_go_dummy = state_is_addr && tx_done;
-    assign state_go_rx    = state_is_dummy && dummy_cnt_is_2 && spi_rd_seq;
-    assign state_go_tx    = state_is_dummy && dummy_cnt_is_2 && spi_wr_seq;
-    assign state_go_eot   = (state_is_rx && rx_done) || (state_is_tx && tx_done);
-    assign state_go_idle  = state_is_eot && spi_clk_fall_edge;
+    assign state_go_cmd   = state_is_idle & stream_data_tx_vld_i & (spi_rd_seq | spi_wr_seq);
+    assign state_go_addr  = state_is_cmd & tx_done;
+    assign state_go_dummy = state_is_addr & tx_done;
+    assign state_go_rx    = state_is_dummy & dummy_cnt_is_2 & spi_rd_seq;
+    assign state_go_tx    = state_is_dummy & dummy_cnt_is_2 & spi_wr_seq;
+    assign state_go_eot   = (state_is_rx & rx_wait & spi_clk_fall_edge) | (state_is_tx & tx_done);
+    assign state_go_idle  = state_is_eot;
 
     spi_clkgen #(
         .CNT_WIDTH(8)
@@ -168,7 +169,7 @@ module spi_master_controller (
         end else begin
             if (state_go_cmd) begin
                 spi_clk_en <= 1'b1;
-            end else if (state_go_idle) begin
+            end else if (state_go_eot) begin
                 spi_clk_en <= 1'b0;
             end
         end
@@ -240,13 +241,26 @@ module spi_master_controller (
         end
     end
 
+    // pending rx state until spi_clk_fall_edge
+    always @(posedge clk_i or negedge rst_n_i) begin
+        if (!rst_n_i) begin
+            rx_wait <= 1'b0;
+        end else begin
+            if (spi_clk_fall_edge) begin
+                rx_wait <= 1'b0;
+            end else if (rx_done) begin
+                rx_wait <= 1'b1;
+            end
+        end
+    end
+
     always @(posedge clk_i or negedge rst_n_i) begin
         if (!rst_n_i) begin
             spi_cs_n_o <= 1'b1;
         end else begin
             if (state_go_cmd) begin
                 spi_cs_n_o <= 1'b0;
-            end else if (state_go_idle) begin
+            end else if (state_go_eot) begin
                 spi_cs_n_o <= 1'b1;
             end
         end
@@ -256,7 +270,7 @@ module spi_master_controller (
         if (!rst_n_i) begin
             eot_o <= 1'b0;
         end else begin
-            eot_o <= state_is_eot;
+            eot_o <= state_go_eot;
         end
     end
 
