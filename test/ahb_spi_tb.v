@@ -136,6 +136,37 @@ module ahb_spi_tb;
         end
     endtask
 
+    task ahb_write_read(input [3:0] addr, input [31:0] wdata, output [31:0] rdata);
+        begin
+            aclk_wait(1);
+            while (!hreadyout) begin
+                aclk_wait(1);
+            end
+            hsel   = 1;
+            hwrite = 1;
+            haddr  = addr;
+            aclk_wait(1);
+            hwrite = 0;
+            haddr  = 0;
+            hwdata = wdata;
+            while (!hreadyout) begin
+                aclk_wait(1);
+            end
+            $display("AHB write [%d] = 0x%08x", addr, wdata);
+            hsel   = 1;
+            hwrite = 0;
+            haddr  = addr;
+            aclk_wait(1);
+            haddr = 0;
+            while (!hreadyout) begin
+                aclk_wait(1);
+            end
+            rdata = prdata;
+            ahb_clr();
+            $display("AHB read [%d] = 0x%08x", addr, rdata);
+        end
+    endtask
+
     initial begin
         ahb_clr();
         rst_n = 0;
@@ -155,6 +186,8 @@ module ahb_spi_tb;
         ahb_write(1, 32'habcd1234);
         aclk_wait(8);
         ahb_read(1, tmp_data);
+        aclk_wait(8);
+        ahb_write_read(1, 32'h1234abcd, tmp_data);
 
         aclk_wait(32);
         $finish;
