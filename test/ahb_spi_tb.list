@@ -1,0 +1,8 @@
+../rtl/apb_spi_master.v
+../rtl/apb_spi_rf.v
+../rtl/spi_clkgen.v
+../rtl/spi_master_controller.v
+../rtl/spi_rx.v
+../rtl/spi_tx.v
+../rtl/ahb2apb_bridge.v
+../test/ahb_spi_tb.v

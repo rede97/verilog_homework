@@ -1,7 +1,7 @@
 module spi_master_controller (
     input  wire        clk_i,                 // system clock
     input  wire        rst_n_i,               // system reset
-    input  wire [ 7:0] spi_clk_div_i,         // spi clock divider
+    input  wire [15:0] spi_clk_div_i,         // spi clock divider
     input  wire        spi_clk_div_vld_i,     // spi clock divider input valid
     input  wire [31:0] stream_data_tx_i,      // tx data stream input
     input  wire        stream_data_tx_vld_i,  // tx data stream valid
@@ -82,7 +82,7 @@ module spi_master_controller (
     assign state_go_idle  = state_is_eot;
 
     spi_clkgen #(
-        .CNT_WIDTH(8)
+        .CNT_WIDTH(16)
     ) clk_gen (
         .clk_i            (clk_i),
         .rst_n_i          (rst_n_i),
