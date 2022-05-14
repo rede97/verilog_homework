@@ -28,13 +28,13 @@ module ahb2apb_bridge #(
     localparam [1:0] AHB_TRANS_IDLE = 2'b00;
     localparam [2:0] AHB_SIZE_32bit = 3'b010;
 
-    wire                  bridge_enable;
-    reg  [           1:0] apb_fsm_state;
-    reg  [           1:0] apb_fsm_state_next;
+    wire       bridge_enable;
+    reg  [1:0] apb_fsm_state;
+    reg  [1:0] apb_fsm_state_next;
 
-    wire                  go_idle;
-    wire                  go_setup;
-    wire                  go_access;
+    wire       go_idle;
+    wire       go_setup;
+    wire       go_access;
 
     assign bridge_enable = hsel_i & hready_i;
     assign go_idle       = apb_fsm_state_next == IDLE;
