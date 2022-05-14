@@ -109,7 +109,7 @@ module ahb_spi_tb;
             while (!hreadyout) begin
                 aclk_wait(1);
             end
-            rdata = prdata;
+            rdata = hrdata;
             ahb_clr();
             $display("AHB read [%02d] = 0x%08x", addr, rdata);
         end
@@ -158,7 +158,7 @@ module ahb_spi_tb;
             while (!hreadyout) begin
                 aclk_wait(1);
             end
-            rdata = prdata;
+            rdata = hrdata;
             ahb_clr();
             $display("AHB read [%02d] = 0x%08x", addr + 1, rdata);
         end
