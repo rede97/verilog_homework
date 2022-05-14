@@ -19,7 +19,7 @@ module ahb2apb_bridge #(
     output reg                   penable_o,
     output reg  [ADDR_WIDTH-1:0] paddr_o,
     output reg                   pwrite_o,
-    output reg  [          31:0] pwdata_o,
+    output wire [          31:0] pwdata_o,
     input  wire [          31:0] prdata_i,
     input  wire                  pready_i
 );
@@ -29,10 +29,8 @@ module ahb2apb_bridge #(
     localparam [2:0] AHB_SIZE_32bit = 3'b010;
 
     wire                  bridge_enable;
-    reg                   hwrite;
     reg  [           1:0] apb_fsm_state;
     reg  [           1:0] apb_fsm_state_next;
-    reg  [ADDR_WIDTH-1:0] haddr;
 
     wire                  go_idle;
     wire                  go_setup;
@@ -43,17 +41,7 @@ module ahb2apb_bridge #(
     assign go_setup      = apb_fsm_state_next == SETUP;
     assign go_access     = apb_fsm_state_next == ACCESS;
 
-    always @(posedge clk_i or negedge rst_n_i) begin
-        if (!rst_n_i) begin
-            haddr  <= 32'h0;
-            hwrite <= 1'b0;
-        end else begin
-            if (bridge_enable) begin
-                haddr  <= haddr_i;
-                hwrite <= hwrite_i;
-            end
-        end
-    end
+    assign pwdata_o      = hwdata_i;
 
     always @(posedge clk_i or negedge rst_n_i) begin
         if (!rst_n_i) begin
@@ -93,45 +81,32 @@ module ahb2apb_bridge #(
             psel_o <= 1'b0;
             penable_o <= 1'b0;
             paddr_o <= 'd0;
-            pwdata_o <= 32'd0;
             pwrite_o <= 1'b0;
         end else begin
-            case (apb_fsm_state)
+            case (apb_fsm_state_next)
                 IDLE: begin
                     psel_o <= 1'b0;
                     penable_o <= 1'b0;
                     paddr_o <= 'd0;
                     pwrite_o <= 1'b0;
-                    pwdata_o <= 32'd0;
                 end
                 SETUP: begin
                     psel_o <= 1'b1;
                     penable_o <= 1'b0;
-                    paddr_o <= haddr;
-                    pwrite_o <= hwrite;
-                    pwdata_o <= hwdata_i;
+                    paddr_o <= haddr_i;
+                    pwrite_o <= hwrite_i;
                 end
                 ACCESS: begin
-                    if (penable_o && pready_i) begin
-                        psel_o <= 1'b0;
-                        penable_o <= 1'b0;
-                        paddr_o <= 'd0;
-                        pwrite_o <= 1'b0;
-                        pwdata_o <= 32'd0;
-                    end else begin
-                        psel_o <= 1'b1;
-                        penable_o <= 1'b1;
-                        paddr_o <= paddr_o;
-                        pwrite_o <= pwrite_o;
-                        pwdata_o <= pwdata_o;
-                    end
+                    psel_o <= 1'b1;
+                    penable_o <= 1'b1;
+                    paddr_o <= paddr_o;
+                    pwrite_o <= pwrite_o;
                 end
                 default: begin
                     psel_o <= 1'b0;
                     penable_o <= 1'b0;
                     paddr_o <= 'd0;
                     pwrite_o <= 1'b0;
-                    pwdata_o <= 32'd0;
                 end
             endcase
         end
@@ -139,24 +114,16 @@ module ahb2apb_bridge #(
 
     always @(posedge clk_i or negedge rst_n_i) begin
         if (!rst_n_i) begin
-            hrdata_o <= 32'h0;
-        end
-        begin
-            if (apb_fsm_state == ACCESS && pready_i) begin
-                hrdata_o <= prdata_i;
-            end
-        end
-    end
-
-    always @(posedge clk_i or negedge rst_n_i) begin
-        if (!rst_n_i) begin
             hready_o <= 1'b0;
+            hrdata_o <= 32'h0;
         end
         begin
             if (go_idle) begin
                 hready_o <= pready_i;
+                hrdata_o <= prdata_i;
             end else begin
                 hready_o <= 1'b0;
+                hrdata_o <= hrdata_o;
             end
         end
     end
