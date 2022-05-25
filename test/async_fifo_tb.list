@@ -1,0 +1,8 @@
+../rtl/async_fifo.v
+../rtl/bin2gray.v
+../rtl/counter_wrapper.v
+../rtl/dual_port_mem.v
+../rtl/general_syncer.v
+../rtl/rd_empty.v
+../rtl/wr_full.v
+../test/async_fifo_tb.v

@@ -1,0 +1,6 @@
+../rtl/uart_tx.v
+../rtl/gen_baudrate.v
+../rtl/uart.v
+../rtl/sync_fifo.v
+../rtl/uart_rx.v
+../test/uart_tx_rx_tb.v
