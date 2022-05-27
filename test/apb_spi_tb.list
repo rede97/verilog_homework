@@ -1,7 +1,0 @@
-../rtl/apb_spi_master.v
-../rtl/apb_spi_rf.v
-../rtl/spi_clkgen.v
-../rtl/spi_master_controller.v
-../rtl/spi_rx.v
-../rtl/spi_tx.v
-../test/apb_spi_tb.v

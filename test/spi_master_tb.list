@@ -1,5 +1,0 @@
-../rtl/spi_clkgen.v
-../rtl/spi_master_controller.v
-../rtl/spi_rx.v
-../rtl/spi_tx.v
-../test/spi_master_tb.v
