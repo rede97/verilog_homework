@@ -8,7 +8,7 @@ OUT_DIR = $(shell pwd)/sim/out
 WORK_DIR = ../rtl
 TEST_DIR = ../test
 WORK_SOURCES = $(wildcard $(WORK_DIR)/*.v)
-TEST_SOURCES = $(wildcard $(TEST_DIR)/*.v)
+TEST_SOURCES = $(wildcard $(TEST_DIR)/*.v) $(wildcard $(TEST_DIR)/*.sv) 
 
 TESTBENCH_SOURCES = $(shell ls $(TEST_DIR)/*_tb.v)
 TESTBENCHES = $(shell echo $(TESTBENCH_SOURCES) | sed 's:$(TEST_DIR)/::g' | sed 's:\.v::g')

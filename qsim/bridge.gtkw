@@ -1,0 +1,78 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Mon Jun 06 18:55:08 2022
+[*]
+[dumpfile] "D:\code\homework\qsim\sim\out\bridge_tb.vcd"
+[dumpfile_mtime] "Mon Jun 06 18:54:31 2022"
+[dumpfile_size] 18379
+[savefile] "D:\code\homework\qsim\bridge.gtkw"
+[timestart] 0
+[size] 2560 1361
+[pos] 2550 -10
+*-5.028861 75 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] bridge_tb.
+[treeopen] bridge_tb.bridge.
+[sst_width] 422
+[signals_width] 280
+[sst_expanded] 1
+[sst_vpaned_height] 412
+@28
+bridge_tb.bridge.ACLK
+bridge_tb.bridge.ARESETN
+@200
+-AXI Write Address channel
+@22
+#{bridge_tb.bridge.AWADDR[7:0]} bridge_tb.bridge.AWADDR[7] bridge_tb.bridge.AWADDR[6] bridge_tb.bridge.AWADDR[5] bridge_tb.bridge.AWADDR[4] bridge_tb.bridge.AWADDR[3] bridge_tb.bridge.AWADDR[2] bridge_tb.bridge.AWADDR[1] bridge_tb.bridge.AWADDR[0]
+@28
+#{bridge_tb.bridge.AWBURST[1:0]} bridge_tb.bridge.AWBURST[1] bridge_tb.bridge.AWBURST[0]
+bridge_tb.bridge.AWID[0]
+@22
+#{bridge_tb.bridge.AWLEN[7:0]} bridge_tb.bridge.AWLEN[7] bridge_tb.bridge.AWLEN[6] bridge_tb.bridge.AWLEN[5] bridge_tb.bridge.AWLEN[4] bridge_tb.bridge.AWLEN[3] bridge_tb.bridge.AWLEN[2] bridge_tb.bridge.AWLEN[1] bridge_tb.bridge.AWLEN[0]
+@28
+bridge_tb.bridge.AWREADY
+#{bridge_tb.bridge.AWSIZE[2:0]} bridge_tb.bridge.AWSIZE[2] bridge_tb.bridge.AWSIZE[1] bridge_tb.bridge.AWSIZE[0]
+bridge_tb.bridge.AWVALID
+@200
+-AXI Write Data channel
+@22
+#{bridge_tb.bridge.WDATA[31:0]} bridge_tb.bridge.WDATA[31] bridge_tb.bridge.WDATA[30] bridge_tb.bridge.WDATA[29] bridge_tb.bridge.WDATA[28] bridge_tb.bridge.WDATA[27] bridge_tb.bridge.WDATA[26] bridge_tb.bridge.WDATA[25] bridge_tb.bridge.WDATA[24] bridge_tb.bridge.WDATA[23] bridge_tb.bridge.WDATA[22] bridge_tb.bridge.WDATA[21] bridge_tb.bridge.WDATA[20] bridge_tb.bridge.WDATA[19] bridge_tb.bridge.WDATA[18] bridge_tb.bridge.WDATA[17] bridge_tb.bridge.WDATA[16] bridge_tb.bridge.WDATA[15] bridge_tb.bridge.WDATA[14] bridge_tb.bridge.WDATA[13] bridge_tb.bridge.WDATA[12] bridge_tb.bridge.WDATA[11] bridge_tb.bridge.WDATA[10] bridge_tb.bridge.WDATA[9] bridge_tb.bridge.WDATA[8] bridge_tb.bridge.WDATA[7] bridge_tb.bridge.WDATA[6] bridge_tb.bridge.WDATA[5] bridge_tb.bridge.WDATA[4] bridge_tb.bridge.WDATA[3] bridge_tb.bridge.WDATA[2] bridge_tb.bridge.WDATA[1] bridge_tb.bridge.WDATA[0]
+@28
+bridge_tb.bridge.WLAST
+bridge_tb.bridge.WREADY
+@22
+#{bridge_tb.bridge.WSTRB[3:0]} bridge_tb.bridge.WSTRB[3] bridge_tb.bridge.WSTRB[2] bridge_tb.bridge.WSTRB[1] bridge_tb.bridge.WSTRB[0]
+@28
+bridge_tb.bridge.WVALID
+@200
+-CMD interface
+@28
+[color] 2
+bridge_tb.bridge.bridge_cmd.cmd_burst_type_o[1:0]
+[color] 2
+bridge_tb.bridge.bridge_cmd.cmd_error_o
+[color] 2
+bridge_tb.bridge.bridge_cmd.cmd_id_o[0]
+[color] 2
+bridge_tb.bridge.bridge_cmd.cmd_read_o
+@22
+[color] 2
+bridge_tb.bridge.bridge_cmd.cmd_start_addr_o[7:0]
+[color] 2
+bridge_tb.bridge.bridge_cmd.cmd_transfer_len_o[7:0]
+@28
+[color] 2
+bridge_tb.bridge.bridge_cmd.cmd_write_o
+[color] 2
+bridge_tb.bridge.bridge_cmd.ctrl_cmd_ready_i
+[color] 2
+bridge_tb.bridge.bridge_cmd.ctrl_cmd_valid_o
+@22
+bridge_tb.bridge.bridge_ctrl.HADDR[7:0]
+@28
+bridge_tb.bridge.bridge_ctrl.HBURST[2:0]
+bridge_tb.bridge.bridge_ctrl.HREADY
+#{bridge_tb.bridge.bridge_ctrl.HSIZE[2:0]} bridge_tb.bridge.bridge_ctrl.HSIZE[2] bridge_tb.bridge.bridge_ctrl.HSIZE[1] bridge_tb.bridge.bridge_ctrl.HSIZE[0]
+bridge_tb.bridge.bridge_ctrl.HTRANS[1:0]
+bridge_tb.bridge.bridge_ctrl.ctrl_go_working
+[pattern_trace] 1
+[pattern_trace] 0

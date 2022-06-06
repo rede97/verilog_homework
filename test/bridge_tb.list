@@ -1,0 +1,7 @@
+../test/bridge_tb.v
+../rtl/sync_fifo.v
+../rtl/axi2ahb.v
+../rtl/axi2ahb_wdata.v
+../rtl/axi2ahb_rdata.v
+../rtl/axi2ahb_ctrl.v
+../rtl/axi2ahb_cmd.v
