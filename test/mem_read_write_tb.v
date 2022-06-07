@@ -7,7 +7,7 @@ module mem_read_write_tb;
     reg  [31:0] hwdata;
     reg         hwrite;
     reg         hsel;
-    //   reg  [ 1:0] htrans;
+    reg  [ 1:0] htrans;
     wire        hreadyout;
     wire        hreadyin;
     wire [31:0] hrdata;
@@ -22,7 +22,7 @@ module mem_read_write_tb;
         .hresetn(hresetn),  //给DUT
         .hsel(hsel),  //给DUT
         .hwrite(hwrite),  //给DUT
-        .htrans(2'b10),  //给DUT
+        .htrans(htrans),  //给DUT
         .hsize(3'b010),  //给DUT
         .hready(hreadyin),  //给DUT
         .hburst(3'b0),  //无用 burst没用的话就接0，在tr里面激励产生什么都关系不大了
@@ -59,6 +59,7 @@ module mem_read_write_tb;
             hwdata = 0;
             hwrite = 0;
             hsel   = 0;
+            htrans = 0;
         end
     endtask
 
@@ -70,8 +71,10 @@ module mem_read_write_tb;
             end
             hsel   = 1;
             hwrite = 0;
+            htrans = 2'b10;
             haddr  = addr;
             hclk_wait(1);
+            htrans = 2'b00;
             haddr = 0;
             while (!hreadyout) begin
                 hclk_wait(1);
@@ -91,9 +94,11 @@ module mem_read_write_tb;
             hsel   = 1;
             hwrite = 1;
             haddr  = addr;
+            htrans = 2'b10;
             hclk_wait(1);
             hwrite = 0;
             haddr  = 0;
+            htrans = 2'b10;
             hwdata = wdata;
             hclk_wait(1);
             while (!hreadyout) begin
@@ -112,10 +117,12 @@ module mem_read_write_tb;
             end
             hsel   = 1;
             hwrite = 1;
+            htrans = 2'b10;
             haddr  = addr;
             hclk_wait(1);
             hwrite = 0;
             haddr  = addr + 4;
+            htrans = 2'b10;
             hwdata = wdata;
             hclk_wait(1);
             while (!hreadyout) begin

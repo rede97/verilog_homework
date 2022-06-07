@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
-[*] Mon Jun 06 18:55:08 2022
+[*] Tue Jun 07 19:06:52 2022
 [*]
 [dumpfile] "D:\code\homework\qsim\sim\out\bridge_tb.vcd"
-[dumpfile_mtime] "Mon Jun 06 18:54:31 2022"
-[dumpfile_size] 18379
+[dumpfile_mtime] "Tue Jun 07 19:03:21 2022"
+[dumpfile_size] 27925
 [savefile] "D:\code\homework\qsim\bridge.gtkw"
-[timestart] 0
+[timestart] 108
 [size] 2560 1361
 [pos] 2550 -10
-*-5.028861 75 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-4.028861 167 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] bridge_tb.
 [treeopen] bridge_tb.bridge.
 [sst_width] 422
@@ -66,13 +66,19 @@ bridge_tb.bridge.bridge_cmd.cmd_write_o
 bridge_tb.bridge.bridge_cmd.ctrl_cmd_ready_i
 [color] 2
 bridge_tb.bridge.bridge_cmd.ctrl_cmd_valid_o
+@200
+-AHB Interface
 @22
 bridge_tb.bridge.bridge_ctrl.HADDR[7:0]
 @28
 bridge_tb.bridge.bridge_ctrl.HBURST[2:0]
-bridge_tb.bridge.bridge_ctrl.HREADY
-#{bridge_tb.bridge.bridge_ctrl.HSIZE[2:0]} bridge_tb.bridge.bridge_ctrl.HSIZE[2] bridge_tb.bridge.bridge_ctrl.HSIZE[1] bridge_tb.bridge.bridge_ctrl.HSIZE[0]
 bridge_tb.bridge.bridge_ctrl.HTRANS[1:0]
-bridge_tb.bridge.bridge_ctrl.ctrl_go_working
+#{bridge_tb.bridge.bridge_ctrl.HSIZE[2:0]} bridge_tb.bridge.bridge_ctrl.HSIZE[2] bridge_tb.bridge.bridge_ctrl.HSIZE[1] bridge_tb.bridge.bridge_ctrl.HSIZE[0]
+bridge_tb.bridge.HWRITE
+bridge_tb.bridge.bridge_ctrl.HREADY
+@22
+#{bridge_tb.bridge.HWDATA[31:0]} bridge_tb.bridge.HWDATA[31] bridge_tb.bridge.HWDATA[30] bridge_tb.bridge.HWDATA[29] bridge_tb.bridge.HWDATA[28] bridge_tb.bridge.HWDATA[27] bridge_tb.bridge.HWDATA[26] bridge_tb.bridge.HWDATA[25] bridge_tb.bridge.HWDATA[24] bridge_tb.bridge.HWDATA[23] bridge_tb.bridge.HWDATA[22] bridge_tb.bridge.HWDATA[21] bridge_tb.bridge.HWDATA[20] bridge_tb.bridge.HWDATA[19] bridge_tb.bridge.HWDATA[18] bridge_tb.bridge.HWDATA[17] bridge_tb.bridge.HWDATA[16] bridge_tb.bridge.HWDATA[15] bridge_tb.bridge.HWDATA[14] bridge_tb.bridge.HWDATA[13] bridge_tb.bridge.HWDATA[12] bridge_tb.bridge.HWDATA[11] bridge_tb.bridge.HWDATA[10] bridge_tb.bridge.HWDATA[9] bridge_tb.bridge.HWDATA[8] bridge_tb.bridge.HWDATA[7] bridge_tb.bridge.HWDATA[6] bridge_tb.bridge.HWDATA[5] bridge_tb.bridge.HWDATA[4] bridge_tb.bridge.HWDATA[3] bridge_tb.bridge.HWDATA[2] bridge_tb.bridge.HWDATA[1] bridge_tb.bridge.HWDATA[0]
+@29
+bridge_tb.bridge.bridge_wdata.ctrl_wdata_valid_i
 [pattern_trace] 1
 [pattern_trace] 0

@@ -13,13 +13,11 @@ TEST_SOURCES = $(wildcard $(TEST_DIR)/*.v) $(wildcard $(TEST_DIR)/*.sv)
 TESTBENCH_SOURCES = $(shell ls $(TEST_DIR)/*_tb.v)
 TESTBENCHES = $(shell echo $(TESTBENCH_SOURCES) | sed 's:$(TEST_DIR)/::g' | sed 's:\.v::g')
 
-all: $(OUT_DIR) $(LOG_DIR) print_testbenches
+all: make_out_dir print_testbenches
 
-$(OUT_DIR):
-	$(V)mkdir -p $@
-
-$(LOG_DIR):
-	$(V)mkdir -p $@
+make_out_dir:
+	$(V)mkdir -p $(LOG_DIR)
+	$(V)mkdir -p $(OUT_DIR)
 
 print_work_sources:
 	@echo $(WORK_SOURCES)

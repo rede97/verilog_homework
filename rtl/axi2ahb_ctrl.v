@@ -10,6 +10,7 @@ module axi2ahb_ctrl #(
     output wire [               2:0] HSIZE,
     output reg  [               1:0] HTRANS,
     input  wire                      HREADY,
+    output reg                       HWRITE,
     // CMD interface
     input  wire                      cmd_read_i,
     input  wire                      cmd_write_i,
@@ -26,14 +27,13 @@ module axi2ahb_ctrl #(
     // CTRL-WDATA interface
     input  wire                      ctrl_wdata_last_i,
     input  wire                      ctrl_wdata_ready_i,
-    output wire                      ctrl_wdata_valid_o
+    output reg                       ctrl_wdata_valid_o
 );
     localparam [1:0] IDLE = 2'b00, NOSEQ = 2'b10, SEQ = 2'b11, BUSY = 2'b01;
 
     reg  [               7:0] ctrl_transfer_counter;
     reg                       ctrl_working_flag;
     reg  [               1:0] HTRANS_next;
-    reg                       ctrl_data_phase;
 
     wire                      ahb_read_write_ready;
     wire [AXI_ADDR_WIDTH-1:0] HADDR_inc;
@@ -55,16 +55,11 @@ module axi2ahb_ctrl #(
     always @(posedge ACLK or negedge ARESETN) begin
         if (!ARESETN) begin
             ctrl_working_flag <= 1'b0;
-            ctrl_cmd_ready_o  <= 1'b0;
         end else begin
             if (ctrl_go_working) begin
                 ctrl_working_flag <= 1'b1;
-                ctrl_cmd_ready_o  <= 1'b0;
             end else if (ctrl_go_idle) begin
                 ctrl_working_flag <= 1'b0;
-                ctrl_cmd_ready_o  <= 1'b1;
-            end else begin
-                ctrl_cmd_ready_o <= 1'b0;
             end
         end
     end
@@ -136,16 +131,9 @@ module axi2ahb_ctrl #(
     end
 
     always @(*) begin
-        if (HTRANS == IDLE) begin
-            if (ctrl_go_working || (ctrl_working_flag && ahb_read_write_ready)) begin
+        if ((ctrl_go_working || ctrl_working_flag) && ahb_read_write_ready) begin
+            if (ctrl_go_working || HTRANS == IDLE) begin
                 HTRANS_next = NOSEQ;
-            end else begin
-                HTRANS_next = HTRANS;
-            end
-        end else begin
-            // NOSEQ or SEQ
-            if (ctrl_go_idle) begin
-                HTRANS_next = IDLE;
             end else begin
                 if (cmd_burst_type_i == 2'b10) begin
                     // WRAP burst
@@ -163,15 +151,40 @@ module axi2ahb_ctrl #(
                     end
                 end
             end
+        end else begin
+            HTRANS_next = IDLE;
+        end
+
+    end
+
+    always @(posedge ACLK or negedge ARESETN) begin
+        if (!ARESETN) begin
+            ctrl_wdata_valid_o <= 1'b0;
+        end else begin
+            ctrl_wdata_valid_o <= ctrl_working_flag & cmd_write_i;
         end
     end
 
     always @(posedge ACLK or negedge ARESETN) begin
         if (!ARESETN) begin
-            ctrl_data_phase <= 1'b0;
+            ctrl_cmd_ready_o <= 1'b0;
         end else begin
-            ctrl_data_phase <= ctrl_working_flag;
+            ctrl_cmd_ready_o <= ctrl_working_flag & ctrl_go_idle;
         end
     end
+
+
+    always @(posedge ACLK or negedge ARESETN) begin
+        if (!ARESETN) begin
+            HWRITE <= 1'b0;
+        end else begin
+            if (ctrl_go_working) begin
+                HWRITE <= cmd_write_i;
+            end else if (ctrl_go_idle) begin
+                HWRITE <= 1'b0;
+            end
+        end
+    end
+
 
 endmodule

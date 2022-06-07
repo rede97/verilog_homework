@@ -80,6 +80,10 @@ module bridge_tb;
 
         axi_arvalid = 0;
         axi_rready = 0;
+
+        axi_wait(1024);
+        $display("timeout");
+        $finish;
     end
 
     axi2ahb #(
@@ -249,12 +253,13 @@ module bridge_tb;
                         if (addr_cnt + 1 == wlen) begin
                             axi_wlast = 1'b1;
                         end
-                        axi_wdata = axi_buffer[addr_cnt];
                         axi_wait(1);
+                        axi_wdata = axi_buffer[addr_cnt];
                         if (axi_wready) begin
                             addr_cnt = addr_cnt + 1;
                         end
                     end
+                    axi_wait(1);
                     axi_wclr;
                     // wait bresp
                     repeat (16) begin
@@ -278,6 +283,7 @@ module bridge_tb;
             $stop;
         end
     endtask
+
 
 
     initial begin

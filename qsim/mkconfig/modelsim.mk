@@ -82,11 +82,11 @@ $(LIB_TEST) :
 
 compile: work_library test_library
 
-%_tb: compile
+%_tb: compile make_out_dir
 	$(V)$(VSIM) -c -L $(RUN_DIR)/$(LIB_WORK) -do $(CLI_STARTUP_FILE) $(LIB_TEST).$@ -voptargs=+acc=npr
-	-$(V)mv -f *.vcd $(OUT_DIR);
-	-$(V)mv -f *.log $(LOG_DIR);
-	-$(V)mv -f transcript $(LOG_DIR);
+	-$(V)mv *.vcd $(OUT_DIR)
+	-$(V)mv *.log $(LOG_DIR)
+	-$(V)mv transcript $(LOG_DIR)
 
 simulate: $(TESTBENCHES)
 
