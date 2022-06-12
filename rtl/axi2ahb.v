@@ -119,6 +119,7 @@ module axi2ahb #(
     output wire                            HWRITE,
     output wire [      AXI_DATA_WIDTH-1:0] HWDATA,
     input  wire                            HREADY,
+    input  wire                            HRESP,
     input  wire [      AXI_DATA_WIDTH-1:0] HRDATA
 );
 
@@ -132,13 +133,13 @@ module axi2ahb #(
     wire                        ctrl_cmd_valid;
     wire                        ctrl_cmd_ready;
 
-    wire                        ctrl_read_ready;
-    wire                        ctrl_read_valid;
-    wire                        ctrl_read_last;
+    wire                        ctrl_rdata_ready;
+    wire                        ctrl_rdata_valid;
+    wire                        ctrl_rdata_last;
 
-    wire                        ctrl_write_ready;
-    wire                        ctrl_write_valid;
-    wire                        ctrl_write_last;
+    wire                        ctrl_wdata_ready;
+    wire                        ctrl_wdata_valid;
+    wire                        ctrl_wdata_last;
 
     axi2ahb_cmd #(
         .AXI_ID_WIDTH  (AXI_ID_WIDTH),
@@ -186,6 +187,7 @@ module axi2ahb #(
         .HREADY            (HREADY),
         .HWRITE            (HWRITE),
         // CMD dispatch interface
+        .cmd_error_i       (cmd_error),
         .cmd_read_i        (cmd_read),
         .cmd_write_i       (cmd_write),
         .cmd_start_addr_i  (cmd_start_addr),
@@ -207,23 +209,47 @@ module axi2ahb #(
         .AXI_ID_WIDTH  (AXI_ID_WIDTH),
         .AXI_DATA_WIDTH(AXI_DATA_WIDTH)
     ) bridge_wdata (
-        .ACLK(ACLK),
-        .ARESETN(ARESETN),
-        .WDATA(WDATA),
-        .WSTRB(WSTRB),
-        .WLAST(WLAST),
-        .WVALID(WVALID),
-        .WREADY(WREADY),
-        .BID(BID),
-        .BRESP(BRESP),
-        .BVALID(BVALID),
-        .BREADY(BREADY),
-        .HWDATA(HWDATA),
-        .HREADY(HREADY),
-        .cmd_id_i(cmd_id),
-        .ctrl_wdata_last_o(ctrl_wdata_last),
+        .ACLK              (ACLK),
+        .ARESETN           (ARESETN),
+        .WDATA             (WDATA),
+        .WSTRB             (WSTRB),
+        .WLAST             (WLAST),
+        .WVALID            (WVALID),
+        .WREADY            (WREADY),
+        .BID               (BID),
+        .BRESP             (BRESP),
+        .BVALID            (BVALID),
+        .BREADY            (BREADY),
+        .HWDATA            (HWDATA),
+        .HREADY            (HREADY),
+        .HRESP             (HRESP),
+        .cmd_id_i          (cmd_id),
+        .cmd_error_i       (cmd_error),
+        .ctrl_wdata_last_o (ctrl_wdata_last),
         .ctrl_wdata_valid_i(ctrl_wdata_valid),
         .ctrl_wdata_ready_o(ctrl_wdata_ready)
+    );
+
+    axi2ahb_rdata #(
+        .AXI_ID_WIDTH  (AXI_ID_WIDTH),
+        .AXI_DATA_WIDTH(AXI_DATA_WIDTH)
+    ) bridge_rdata (
+        .ACLK(ACLK),
+        .ARESETN(ARESETN),
+        .RID(RID),
+        .RDATA(RDATA),
+        .RRESP(RRESP),
+        .RLAST(RLAST),
+        .RVALID(RVALID),
+        .RREADY(RREADY),
+        .HRDATA(HRDATA),
+        .HREADY(HREADY),
+        .HRESP(HRESP),
+        .cmd_id_i(cmd_id),
+        .cmd_error_i(cmd_error),
+        .ctrl_rdata_ready_o(ctrl_rdata_ready),
+        .ctrl_rdata_last_i(ctrl_rdata_last),
+        .ctrl_rdata_valid_i(ctrl_rdata_valid)
     );
 
 

@@ -81,7 +81,7 @@ module bridge_tb;
         axi_arvalid = 0;
         axi_rready = 0;
 
-        axi_wait(1024);
+        axi_wait(1024 * 2);
         $display("timeout");
         $finish;
     end
@@ -135,7 +135,8 @@ module bridge_tb;
         .HWRITE (),
         .HWDATA (),
         .HREADY (1'b1),
-        .HRDATA ()
+        .HRESP  (1'b0),
+        .HRDATA ('d0)
     );
 
     localparam BURST_FIXED = 2'b00, BURST_INC = 2'b01, BURST_WRAP = 2'b10;
@@ -144,7 +145,6 @@ module bridge_tb;
         input integer n;
         begin
             repeat (n) @(posedge aclk);
-            #1;
         end
     endtask
 
@@ -244,40 +244,44 @@ module bridge_tb;
             // wait awready
             repeat (16) begin
                 axi_wait(1);
-                if (axi_awready) begin
-                    axi_awclr;
+                while (!axi_awready) begin
+                    axi_wait(1);
+                end
+                axi_awclr;
+                while (addr_cnt < wlen) begin
                     // start write
                     axi_wvalid = 1'b1;
                     axi_wstrb  = 4'b1111;
-                    while (addr_cnt < wlen) begin
-                        if (addr_cnt + 1 == wlen) begin
-                            axi_wlast = 1'b1;
-                        end
-                        axi_wait(1);
-                        axi_wdata = axi_buffer[addr_cnt];
-                        if (axi_wready) begin
-                            addr_cnt = addr_cnt + 1;
-                        end
+                    if (addr_cnt + 1 == wlen) begin
+                        axi_wlast = 1'b1;
                     end
+                    axi_wdata = axi_buffer[addr_cnt];
                     axi_wait(1);
-                    axi_wclr;
-                    // wait bresp
-                    repeat (16) begin
-                        axi_wait(1);
-                        if (axi_bvalid) begin
-                            if (axi_bresp != 2'b00) begin
-                                $display("[%m]#%t ERROR: Invalid bresp: %d", $time, axi_bresp);
-                                $stop;
-                            end
-                            axi_bready = 1'b1;
-                            axi_wait(1);
-                            axi_bclr;
-                            disable axi_write;
-                        end
+                    if (axi_wready) begin
+                        addr_cnt = addr_cnt + 1;
+                        axi_wclr;
+                        // axi_wait(2);
+
                     end
-                    $display("[%m]#%t ERROR: Timeout, wait bresp", $time);
-                    $stop;
                 end
+                axi_wait(1);
+                axi_wclr;
+                // wait bresp
+                repeat (16) begin
+                    axi_wait(1);
+                    if (axi_bvalid) begin
+                        if (axi_bresp != 2'b00) begin
+                            $display("[%m]#%t ERROR: Invalid bresp: %d", $time, axi_bresp);
+                            $stop;
+                        end
+                        axi_bready = 1'b1;
+                        axi_wait(1);
+                        axi_bclr;
+                        disable axi_write;
+                    end
+                end
+                $display("[%m]#%t ERROR: Timeout, wait bresp", $time);
+                $stop;
             end
             $display("[%m]#%t ERROR: Timeout, wait awready", $time);
             $stop;
@@ -290,9 +294,6 @@ module bridge_tb;
         aresetn = 1'b0;
         repeat (5) @(posedge aclk);
         aresetn = 1'b1;
-
-
-
         axi_buffer[0] = 32'h03;
         axi_write(0, 1, BURST_INC);
         axi_buffer[0]  = 32'h64343962;
@@ -327,8 +328,13 @@ module bridge_tb;
         axi_buffer[29] = 32'h00000000;
         axi_buffer[30] = 32'h00000000;
         axi_buffer[31] = 32'h00020000;
-        axi_write(16, 32, BURST_FIXED);
+        axi_write(5, 8, BURST_WRAP);
+        axi_write(16, 32, BURST_INC);
         axi_wait(4);
+
+        axi_read(16, 8, BURST_INC);
+        axi_wait(4);
+
         $finish;
     end
 
