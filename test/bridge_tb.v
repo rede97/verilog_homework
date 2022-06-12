@@ -86,6 +86,19 @@ module bridge_tb;
         $finish;
     end
 
+
+    wire [ 7:0] haddr;
+    wire [31:0] hwdata;
+    wire [ 2:0] hburst;
+    wire [ 2:0] hsize;
+    wire        hwrite;
+    wire        hsel;
+    wire [ 1:0] htrans;
+    wire        hreadyout;
+    wire        hreadyin;
+    wire [31:0] hrdata;
+    wire [ 1:0] hresp;
+
     axi2ahb #(
         .AXI_ID_WIDTH  (AXI_ID_WIDTH),
         .AXI_DATA_WIDTH(AXI_DATA_WIDTH),
@@ -128,15 +141,36 @@ module bridge_tb;
         .RVALID (axi_rvalid),
         .RREADY (axi_rready),
         // AHB
-        .HADDR  (),
-        .HBURST (),
-        .HSIZE  (),
-        .HTRANS (),
-        .HWRITE (),
-        .HWDATA (),
-        .HREADY (1'b1),
-        .HRESP  (1'b0),
-        .HRDATA ('d0)
+        .HADDR  (haddr),
+        .HBURST (hburst),
+        .HSIZE  (hsize),
+        .HTRANS (htrans),
+        .HWRITE (hwrite),
+        .HWDATA (hwdata),
+        .HREADY (hreadyout),
+        .HRESP  (hresp[0]),
+        .HRDATA (hrdata)
+    );
+
+    sramc_top u_sramc_top(                 //2.通过接口例化连接DUT顶层文件；结合1、2两步骤建立DUT与TB之间的连接
+        .hclk(aclk),
+        .sram_clk(~aclk),
+        .hresetn(hresetn),  //给DUT
+        .hsel(1'b1),  //给DUT
+        .hwrite(hwrite),  //给DUT
+        .htrans(htrans),  //给DUT
+        .hsize(hsize),  //给DUT
+        .hready(hreadyout),  //给DUT
+        .hburst(3'b0),  //无用 burst没用的话就接0，在tr里面激励产生什么都关系不大了
+        .haddr({24'h0, haddr}),  //给DUT
+        .hwdata(hwdata),  //给DUT
+        .hrdata(hrdata),  //给DUT
+        .dft_en(1'b0),  //不测    dft不测，写成0
+        .bist_en(1'b0),  //不测
+        .hready_resp(hreadyout),
+        .hresp(hresp),
+        .bist_done(),  //不测
+        .bist_fail()  //不测
     );
 
     localparam BURST_FIXED = 2'b00, BURST_INC = 2'b01, BURST_WRAP = 2'b10;
