@@ -75,7 +75,7 @@ module sync_fifo #(
             rd_data_o <= 'b0;
         end else begin
             if (rd_preread) begin
-                rd_data_o <= ram[rd_ptr];
+                rd_data_o <= empty ? 'd0 : ram[rd_ptr];
             end
         end
     end

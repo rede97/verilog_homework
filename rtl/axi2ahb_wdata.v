@@ -26,16 +26,23 @@ module axi2ahb_wdata #(
     input  wire                            ctrl_wdata_valid_i,
     output wire                            ctrl_wdata_ready_o
 );
-    reg                         error_flag;
-    reg  [  AXI_DATA_WIDTH-1:0] buffer_WDATA;
-    reg                         buffer_WLAST;
-    reg                         resp_valid;
-    wire                        resp_error;
-    wire [(AXI_DATA_WIDTH/8):0] expect_wstrb;
+    wire [      AXI_DATA_WIDTH-1:0] wdata_fifo_wdata;
+    wire [(AXI_DATA_WIDTH/8)-1 : 0] wdata_fifo_strb;
+    wire                            wdata_fifo_last;
+    wire                            wdata_fifo_valid;
+    wire                            wdata_fifo_ready;
 
-    assign WREADY             = ctrl_wdata_valid_i;
-    assign ctrl_wdata_ready_o = WVALID;
-    assign ctrl_wdata_last_o  = WLAST;
+
+    reg                             error_flag;
+    reg  [      AXI_DATA_WIDTH-1:0] buffer_WDATA;
+    reg                             buffer_WLAST;
+    reg                             resp_valid;
+    wire                            resp_error;
+    wire [    (AXI_DATA_WIDTH/8):0] expect_wstrb;
+
+    assign wdata_fifo_ready   = ctrl_wdata_valid_i;
+    assign ctrl_wdata_ready_o = wdata_fifo_valid;
+    assign ctrl_wdata_last_o  = wdata_fifo_last;
     assign expect_wstrb       = ((1 << (AXI_DATA_WIDTH / 8)) - 'd1);
     assign resp_error         = error_flag || HRESP;
 
@@ -46,7 +53,7 @@ module axi2ahb_wdata #(
             if (resp_valid) begin
                 error_flag <= 1'b0;
             end else begin
-                error_flag <= cmd_error_i || HRESP || (WVALID && (WSTRB != expect_wstrb));
+                error_flag <= cmd_error_i || HRESP || (wdata_fifo_valid && (wdata_fifo_strb != expect_wstrb));
             end
         end
     end
@@ -58,9 +65,9 @@ module axi2ahb_wdata #(
             buffer_WLAST <= 'b0;
             resp_valid <= 'b0;
         end else begin
-            buffer_WDATA <= WDATA;
+            buffer_WDATA <= wdata_fifo_wdata;
             HWDATA <= buffer_WDATA;
-            buffer_WLAST <= ctrl_wdata_valid_i & WLAST;
+            buffer_WLAST <= ctrl_wdata_valid_i & wdata_fifo_last;
             resp_valid <= buffer_WLAST;
         end
     end
@@ -77,6 +84,23 @@ module axi2ahb_wdata #(
         .rd_rdy_i(BREADY),
         .rd_vld_o(BVALID),
         .rd_data_o({BID, BRESP}),
+        .full_o(),
+        .empty_o(),
+        .elem_cnt_o()
+    );
+
+    sync_fifo #(
+        .DATA_WIDTH({AXI_DATA_WIDTH + (AXI_DATA_WIDTH / 8) + 1}),
+        .DATA_DEPTH(32)
+    ) wdata_fifo (
+        .clk_i(ACLK),
+        .rstn_i(ARESETN),
+        .wr_rdy_o(WREADY),
+        .wr_vld_i(WVALID),
+        .wr_data_i({WDATA, WSTRB, WLAST}),
+        .rd_rdy_i(wdata_fifo_ready),
+        .rd_vld_o(wdata_fifo_valid),
+        .rd_data_o({wdata_fifo_wdata, wdata_fifo_strb, wdata_fifo_last}),
         .full_o(),
         .empty_o(),
         .elem_cnt_o()
