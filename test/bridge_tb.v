@@ -223,7 +223,8 @@ module bridge_tb;
         end
     endtask
 
-    reg [31:0] axi_buffer[255:0];
+    reg [31:0] axi_wbuffer[255:0];
+    reg [31:0] axi_rbuffer[255:0];
     task axi_read;
         input [AXI_ADDR_WIDTH-3:0] raddr;
         input [7:0] rlen;
@@ -250,7 +251,7 @@ module bridge_tb;
                                 $display("[%m]#%t ERROR: Invalid rresp: %d", $time, axi_bresp);
                                 $stop;
                             end
-                            axi_buffer[addr_cnt] = axi_rdata;
+                            axi_rbuffer[addr_cnt] = axi_rdata;
                             addr_cnt = addr_cnt + 1;
                         end
                     end
@@ -289,7 +290,7 @@ module bridge_tb;
                     if (addr_cnt + 1 == wlen) begin
                         axi_wlast = 1'b1;
                     end
-                    axi_wdata = axi_buffer[addr_cnt];
+                    axi_wdata = axi_wbuffer[addr_cnt];
                     axi_wait(1);
                     if (axi_wready) begin
                         addr_cnt = addr_cnt + 1;
@@ -328,45 +329,46 @@ module bridge_tb;
         aresetn = 1'b0;
         repeat (5) @(posedge aclk);
         aresetn = 1'b1;
-        axi_buffer[0] = 32'h03;
+        axi_wbuffer[0] = 32'h03;
         axi_write(0, 1, BURST_INC);
-        axi_buffer[0]  = 32'h64343962;
-        axi_buffer[1]  = 32'h39623732;
-        axi_buffer[2]  = 32'h64343339;
-        axi_buffer[3]  = 32'h38306533;
-        axi_buffer[4]  = 32'h65323561;
-        axi_buffer[5]  = 32'h37643235;
-        axi_buffer[6]  = 32'h64376164;
-        axi_buffer[7]  = 32'h61666261;
-        axi_buffer[8]  = 32'h34383463;
-        axi_buffer[9]  = 32'h33656665;
-        axi_buffer[10] = 32'h33356137;
-        axi_buffer[11] = 32'h65653038;
-        axi_buffer[12] = 32'h38383039;
-        axi_buffer[13] = 32'h63613766;
-        axi_buffer[14] = 32'h66653265;
-        axi_buffer[15] = 32'h39656463;
-        axi_buffer[16] = 32'h00000080;
-        axi_buffer[17] = 32'h00000000;
-        axi_buffer[18] = 32'h00000000;
-        axi_buffer[19] = 32'h00000000;
-        axi_buffer[20] = 32'h00000000;
-        axi_buffer[21] = 32'h00000000;
-        axi_buffer[22] = 32'h00000000;
-        axi_buffer[23] = 32'h00000000;
-        axi_buffer[24] = 32'h00000000;
-        axi_buffer[25] = 32'h00000000;
-        axi_buffer[26] = 32'h00000000;
-        axi_buffer[27] = 32'h00000000;
-        axi_buffer[28] = 32'h00000000;
-        axi_buffer[29] = 32'h00000000;
-        axi_buffer[30] = 32'h00000000;
-        axi_buffer[31] = 32'h00020000;
-        axi_write(5, 8, BURST_WRAP);
+        axi_wbuffer[0]  = 32'h64343962;
+        axi_wbuffer[1]  = 32'h39623732;
+        axi_wbuffer[2]  = 32'h64343339;
+        axi_wbuffer[3]  = 32'h38306533;
+        axi_wbuffer[4]  = 32'h65323561;
+        axi_wbuffer[5]  = 32'h37643235;
+        axi_wbuffer[6]  = 32'h64376164;
+        axi_wbuffer[7]  = 32'h61666261;
+        axi_wbuffer[8]  = 32'h34383463;
+        axi_wbuffer[9]  = 32'h33656665;
+        axi_wbuffer[10] = 32'h33356137;
+        axi_wbuffer[11] = 32'h65653038;
+        axi_wbuffer[12] = 32'h38383039;
+        axi_wbuffer[13] = 32'h63613766;
+        axi_wbuffer[14] = 32'h66653265;
+        axi_wbuffer[15] = 32'h39656463;
+        axi_wbuffer[16] = 32'h00000080;
+        axi_wbuffer[17] = 32'h00000000;
+        axi_wbuffer[18] = 32'h00000000;
+        axi_wbuffer[19] = 32'h00000000;
+        axi_wbuffer[20] = 32'h00000000;
+        axi_wbuffer[21] = 32'h00000000;
+        axi_wbuffer[22] = 32'h00000000;
+        axi_wbuffer[23] = 32'h00000000;
+        axi_wbuffer[24] = 32'h00000000;
+        axi_wbuffer[25] = 32'h00000000;
+        axi_wbuffer[26] = 32'h00000000;
+        axi_wbuffer[27] = 32'h00000000;
+        axi_wbuffer[28] = 32'h00000000;
+        axi_wbuffer[29] = 32'h00000000;
+        axi_wbuffer[30] = 32'h00000000;
+        axi_wbuffer[31] = 32'h00020000;
         axi_write(16, 32, BURST_INC);
         axi_wait(4);
-
-        axi_read(16, 8, BURST_INC);
+        fork : arbit
+            axi_read(16, 8, BURST_INC);
+            axi_write(5, 8, BURST_WRAP);
+        join
         axi_wait(4);
 
         $finish;
