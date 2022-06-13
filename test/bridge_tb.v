@@ -92,7 +92,6 @@ module bridge_tb;
     wire [ 2:0] hburst;
     wire [ 2:0] hsize;
     wire        hwrite;
-    wire        hsel;
     wire [ 1:0] htrans;
     wire        hreadyout;
     wire        hreadyin;
@@ -155,7 +154,7 @@ module bridge_tb;
     sramc_top u_sramc_top(                 //2.通过接口例化连接DUT顶层文件；结合1、2两步骤建立DUT与TB之间的连接
         .hclk(aclk),
         .sram_clk(~aclk),
-        .hresetn(hresetn),  //给DUT
+        .hresetn(aresetn),  //给DUT
         .hsel(1'b1),  //给DUT
         .hwrite(hwrite),  //给DUT
         .htrans(htrans),  //给DUT
@@ -184,42 +183,42 @@ module bridge_tb;
 
     task axi_arclr;
         begin
-            axi_araddr  = 0;
-            axi_arlen   = 0;
-            axi_arburst = 0;
-            axi_arsize  = 0;
-            axi_arvalid = 0;
+            axi_araddr  <= 0;
+            axi_arlen   <= 0;
+            axi_arburst <= 0;
+            axi_arsize  <= 0;
+            axi_arvalid <= 0;
         end
     endtask
 
     task axi_rclr;
         begin
-            axi_rready = 0;
+            axi_rready <= 0;
         end
     endtask
 
     task axi_awclr;
         begin
-            axi_awaddr  = 0;
-            axi_awlen   = 0;
-            axi_awburst = 0;
-            axi_awsize  = 0;
-            axi_awvalid = 0;
+            axi_awaddr  <= 0;
+            axi_awlen   <= 0;
+            axi_awburst <= 0;
+            axi_awsize  <= 0;
+            axi_awvalid <= 0;
         end
     endtask
 
     task axi_wclr;
         begin
-            axi_wdata  = 0;
-            axi_wstrb  = 0;
-            axi_wlast  = 0;
-            axi_wvalid = 0;
+            axi_wdata  <= 0;
+            axi_wstrb  <= 0;
+            axi_wlast  <= 0;
+            axi_wvalid <= 0;
         end
     endtask
 
     task axi_bclr;
         begin
-            axi_bready = 0;
+            axi_bready <= 0;
         end
     endtask
 
@@ -231,11 +230,11 @@ module bridge_tb;
         input [1:0] burst;
         integer addr_cnt;
         begin
-            axi_araddr = {raddr, 2'b00};
-            axi_arlen = rlen - 1;
-            axi_arburst = burst;
-            axi_arsize = 3'b010;
-            axi_arvalid = 1'b1;
+            axi_araddr  <= {raddr, 2'b00};
+            axi_arlen   <= rlen - 1;
+            axi_arburst <= burst;
+            axi_arsize  <= 3'b010;
+            axi_arvalid <= 1'b1;
             addr_cnt = 0;
             // wait arready
             repeat (16) begin
@@ -243,7 +242,7 @@ module bridge_tb;
                 if (axi_arready) begin
                     axi_arclr;
                     // start read
-                    axi_rready = 1'b1;
+                    axi_rready <= 1'b1;
                     while (addr_cnt < rlen) begin
                         axi_wait(1);
                         if (axi_rvalid) begin
@@ -270,12 +269,12 @@ module bridge_tb;
         input [1:0] burst;
         integer addr_cnt;
         begin
-            axi_awaddr = {waddr, 2'b00};
-            axi_awlen = wlen - 1;
-            axi_awburst = burst;
-            axi_awsize = 3'b010;
-            axi_awvalid = 1'b1;
-            addr_cnt = 0;
+            axi_awaddr <= {waddr, 2'b00};
+            axi_awlen <= wlen - 1;
+            axi_awburst <= burst;
+            axi_awsize <= 3'b010;
+            axi_awvalid <= 1'b1;
+            addr_cnt <= 0;
             // wait awready
             repeat (16) begin
                 axi_wait(1);
@@ -285,12 +284,12 @@ module bridge_tb;
                 axi_awclr;
                 while (addr_cnt < wlen) begin
                     // start write
-                    axi_wvalid = 1'b1;
-                    axi_wstrb  = 4'b1111;
+                    axi_wvalid <= 1'b1;
+                    axi_wstrb  <= 4'b1111;
                     if (addr_cnt + 1 == wlen) begin
-                        axi_wlast = 1'b1;
+                        axi_wlast <= 1'b1;
                     end
-                    axi_wdata = axi_wbuffer[addr_cnt];
+                    axi_wdata <= axi_wbuffer[addr_cnt];
                     axi_wait(1);
                     if (axi_wready) begin
                         addr_cnt = addr_cnt + 1;
@@ -309,7 +308,7 @@ module bridge_tb;
                             $display("[%m]#%t ERROR: Invalid bresp: %d", $time, axi_bresp);
                             $stop;
                         end
-                        axi_bready = 1'b1;
+                        axi_bready <= 1'b1;
                         axi_wait(1);
                         axi_bclr;
                         disable axi_write;
@@ -324,7 +323,7 @@ module bridge_tb;
     endtask
 
 
-
+    integer idx;
     initial begin
         aresetn = 1'b0;
         repeat (5) @(posedge aclk);
@@ -370,6 +369,13 @@ module bridge_tb;
             axi_write(5, 8, BURST_WRAP);
         join
         axi_wait(4);
+        for (idx = 0; idx < 8; idx = idx + 1) begin
+            if (axi_wbuffer[idx] != axi_rbuffer[idx]) begin
+                $display("Error: wdata:%x != rdata:%x %d", axi_wbuffer[idx], axi_rbuffer[idx], idx);
+                $finish;
+            end
+        end
+        $display("===TESTPASS===");
 
         $finish;
     end

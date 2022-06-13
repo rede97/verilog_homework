@@ -76,7 +76,10 @@ module axi2ahb_wdata #(
         .wr_data_i({cmd_id_i, resp_error ? 2'b10 : 2'b00}),
         .rd_rdy_i(BREADY),
         .rd_vld_o(BVALID),
-        .rd_data_o({BID, BRESP})
+        .rd_data_o({BID, BRESP}),
+        .full_o(),
+        .empty_o(),
+        .elem_cnt_o()
     );
 
 endmodule

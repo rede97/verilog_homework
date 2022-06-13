@@ -51,7 +51,10 @@ module axi2ahb_rdata #(
         .wr_data_i({cmd_id_i, HRDATA, resp_error ? 2'b10 : 2'b00, ctrl_rdata_last_i}),
         .rd_rdy_i(RREADY),
         .rd_vld_o(RVALID),
-        .rd_data_o({RID, RDATA, RRESP, RLAST})
+        .rd_data_o({RID, RDATA, RRESP, RLAST}),
+        .full_o(),
+        .empty_o(),
+        .elem_cnt_o()
     );
 
 endmodule
