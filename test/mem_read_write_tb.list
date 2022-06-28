@@ -1,5 +1,0 @@
-../memory_model/memory/rtl/verilog/rl_ram_1r1w.sv
-../memory_model/memory/rtl/verilog/rl_ram_1r1w_generic.sv
-../memory_model/ahb3lite_pkg/rtl/verilog/ahb3lite_pkg.sv
-../memory_model/ahb3lite_memory/rtl/verilog/ahb3lite_sram1rw.sv
-../sim/mem_read_write.v
