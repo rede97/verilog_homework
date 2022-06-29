@@ -70,42 +70,32 @@ module axi_slave_router #(
     // Slave Write address channel
     // ==========================================================
     input  wire [ AXI_AWCHAN_WIDTH*AXI_MASTER_PORT-1 : 0] S_AXI_AWCH_i,
-    input  wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_AWVALID_i,
-    output wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_AWREADY_o,
+    input  wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_AWCH_VALID_i,
+    output wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_AWCH_READY_o,
     // ==========================================================
     // Slave Write data channel
     // ==========================================================
-    input  wire [ AXI_WDCHAN_WIDTH*AXI_MASTER_PORT-1 : 0] S_AXI_WDCH_i,
-    input  wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_WVALID_i,
-    output wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_WREADY_o,
+    input  wire [ AXI_WDCHAN_WIDTH*AXI_MASTER_PORT-1 : 0] S_AXI_WCH_i,
+    input  wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_WCH_VALID_i,
+    output wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_WCH_READY_o,
     // ==========================================================
     // Slave Write response channel
     // ==========================================================
     output wire [ AXI_WBCHAN_WIDTH*AXI_MASTER_PORT-1 : 0] S_AXI_BCH_o,
-    output wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_BVALID_o,
-    input  wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_BREADY_i,
+    output wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_BCH_VALID_o,
+    input  wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_BCH_READY_i,
     // ==========================================================
     // Slave Read address channel
     // ==========================================================
     input  wire [ AXI_ARCHAN_WIDTH*AXI_MASTER_PORT-1 : 0] S_AXI_ARCH_i,
-    input  wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_ARVALID_i,
-    output wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_ARREADY_o,
+    input  wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_ARCH_VALID_i,
+    output wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_ARCH_READY_o,
     // ==========================================================
     // Slave Read data channel
     // ==========================================================
     output wire [AXI_RDCHANB_WIDTH*AXI_MASTER_PORT-1 : 0] S_AXI_RCH_o,
-    output wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_RVALID_o,
-    input  wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_RREADY_i,
-    // ==========================================================
-    // Master read resp decoder
-    // ==========================================================
-    output wire [                       AXI_ID_WIDTH-1:0] mst_read_resp_decode_id_o,
-    input  wire [                    AXI_MASTER_PORT-1:0] mst_read_resp_decode_trgt_i,
-    // ==========================================================
-    // Master write resp decoder
-    // ==========================================================
-    output wire [                       AXI_ID_WIDTH-1:0] mst_write_resp_decode_id_o,
-    input  wire [                    AXI_MASTER_PORT-1:0] mst_write_resp_decode_trgt_i
+    output wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_RCH_VALID_o,
+    input  wire [                  AXI_MASTER_PORT-1 : 0] S_AXI_RCH_READY_i
 );
     // Write channel arbiter
     wire                         write_channel_ready;
@@ -127,12 +117,19 @@ module axi_slave_router #(
     wire                         rd_chan_fifo_vld;
     wire                         rd_chan_fifo_rdy;
 
-    assign write_channel_ready        = wd_chan_arbiter_gnt == 0;
-    assign aw_chan_arbiter_gnt        = write_channel_ready ? write_channel_arbiter_gnt : 'd0;
-    assign mst_write_resp_decode_id_o = wb_chan_fifo_dat[AXI_ID_WIDTH-1:0];
+    // Master read resp decoder
+    wire [     AXI_ID_WIDTH-1:0] mst_read_resp_decode_id;
+    wire [  AXI_MASTER_PORT-1:0] mst_read_resp_decode_trgt;
+    // Master write resp decoder
+    wire [     AXI_ID_WIDTH-1:0] mst_write_resp_decode_id;
+    wire [  AXI_MASTER_PORT-1:0] mst_write_resp_decode_trgt;
 
-    assign ar_chan_arboter_gnt        = read_channel_arbiter_gnt;
-    assign mst_read_resp_decode_id_o  = rd_chan_fifo_dat[AXI_ID_WIDTH-1:0];
+    assign write_channel_ready      = wd_chan_arbiter_gnt == 0;
+    assign aw_chan_arbiter_gnt      = write_channel_ready ? write_channel_arbiter_gnt : 'd0;
+    assign mst_write_resp_decode_id = wb_chan_fifo_dat[AXI_ID_WIDTH-1:0];
+
+    assign ar_chan_arboter_gnt      = read_channel_arbiter_gnt;
+    assign mst_read_resp_decode_id  = rd_chan_fifo_dat[AXI_ID_WIDTH-1:0];
 
     always @(posedge ACLK or negedge ARESETN) begin
         if (!ARESETN) begin
@@ -153,7 +150,7 @@ module axi_slave_router #(
     ) axi_aw_arbiter (
         .ACLK      (ACLK),
         .ARESETN   (ARESETN),
-        .requests_i(S_AXI_AWVALID_i),
+        .requests_i(S_AXI_AWCH_VALID_i),
         .arbiter_o (write_channel_arbiter_gnt)
     );
 
@@ -162,7 +159,7 @@ module axi_slave_router #(
     ) axi_ar_arbiter (
         .ACLK      (ACLK),
         .ARESETN   (ARESETN),
-        .requests_i(S_AXI_ARVALID_i),
+        .requests_i(S_AXI_ARCH_VALID_i),
         .arbiter_o (read_channel_arbiter_gnt)
     );
 
@@ -170,11 +167,11 @@ module axi_slave_router #(
     axis_mux #(
         .DATA_WIDTH(AXI_WDCHAN_WIDTH),
         .PORT_NUM  (AXI_MASTER_PORT)
-    ) axi_wb_mux (
-        .mux_ctrl_i (ar_chan_arboter_gnt),
+    ) axi_aw_mux (
+        .mux_ctrl_i (aw_chan_arbiter_gnt),
         .s_axi_dat_i(S_AXI_AWCH_i),
-        .s_axi_vld_i(S_AXI_AWVALID_i),
-        .s_axi_rdy_o(S_AXI_AWREADY_o),
+        .s_axi_vld_i(S_AXI_AWCH_VALID_i),
+        .s_axi_rdy_o(S_AXI_AWCH_READY_o),
         .m_axi_dat_o({RM_AXI_AWID, M_AXI_AWLEN, M_AXI_AWSIZE, M_AXI_AWBURST, M_AXI_AWADD}),
         .m_axi_vld_o(M_AXI_AWVALID),
         .m_axi_rdy_i(M_AXI_AWREADY)
@@ -186,9 +183,9 @@ module axi_slave_router #(
         .PORT_NUM  (AXI_MASTER_PORT)
     ) axi_wd_mux (
         .mux_ctrl_i (wd_chan_arbiter_gnt),
-        .s_axi_dat_i(S_AXI_WDCH_i),
-        .s_axi_vld_i(S_AXI_WVALID_i),
-        .s_axi_rdy_o(S_AXI_WREADY_o),
+        .s_axi_dat_i(S_AXI_WCH_i),
+        .s_axi_vld_i(S_AXI_WCH_VALID_i),
+        .s_axi_rdy_o(S_AXI_WCH_READY_o),
         .m_axi_dat_o({M_AXI_WDATA, M_AXI_WSTRB, M_AXI_WLAST}),
         .m_axi_vld_o(M_AXI_WVALID),
         .m_axi_rdy_i(M_AXI_WREADY)
@@ -198,14 +195,28 @@ module axi_slave_router #(
     axis_demux #(
         .DATA_WIDTH(AXI_WDCHAN_WIDTH),
         .PORT_NUM  (AXI_MASTER_PORT)
-    ) axi_wd_demux (
-        .demux_ctrl_i(mst_write_resp_decode_trgt_i),
+    ) axi_wb_demux (
+        .demux_ctrl_i(mst_write_resp_decode_trgt),
         .s_axi_dat_i (wb_chan_fifo_dat),
         .s_axi_vld_i (wb_chan_fifo_vld),
         .s_axi_rdy_o (wb_chan_fifo_rdy),
         .m_axi_dat_o (S_AXI_BCH_o),
-        .m_axi_vld_o (S_AXI_BVALID_o),
-        .m_axi_rdy_i (S_AXI_BREADY_i)
+        .m_axi_vld_o (S_AXI_BCH_VALID_o),
+        .m_axi_rdy_i (S_AXI_BCH_READY_i)
+    );
+
+    // AR-Channel mux
+    axis_mux #(
+        .DATA_WIDTH(AXI_ARCHAN_WIDTH),
+        .PORT_NUM  (AXI_MASTER_PORT)
+    ) axi_ar_mux (
+        .mux_ctrl_i (ar_chan_arboter_gnt),
+        .s_axi_dat_i(S_AXI_ARCH_i),
+        .s_axi_vld_i(S_AXI_ARCH_VALID_i),
+        .s_axi_rdy_o(S_AXI_ARCH_READY_o),
+        .m_axi_dat_o({M_AXI_ARID, M_AXI_ARLEN, M_AXI_ARSIZE, M_AXI_ARBURST, M_AXI_ARADDR}),
+        .m_axi_vld_o(M_AXI_ARVALID),
+        .m_axi_rdy_i(M_AXI_ARREADY)
     );
 
     // RD-Channel demux
@@ -213,13 +224,13 @@ module axi_slave_router #(
         .DATA_WIDTH(AXI_WDCHAN_WIDTH),
         .PORT_NUM  (AXI_MASTER_PORT)
     ) axi_rd_demux (
-        .demux_ctrl_i(mst_read_resp_decode_trgt_i),
+        .demux_ctrl_i(mst_read_resp_decode_trgt),
         .s_axi_dat_i (rd_chan_fifo_dat),
         .s_axi_vld_i (rd_chan_fifo_vld),
         .s_axi_rdy_o (rd_chan_fifo_rdy),
         .m_axi_dat_o (S_AXI_RCH_o),
-        .m_axi_vld_o (S_AXI_RVALID_o),
-        .m_axi_rdy_i (S_AXI_RREADY_i)
+        .m_axi_vld_o (S_AXI_RCH_VALID_o),
+        .m_axi_rdy_i (S_AXI_RCH_READY_i)
     );
 
     // WB-Channel FIFO
@@ -257,5 +268,20 @@ module axi_slave_router #(
         .elem_cnt_o()
     );
 
+    axi_id_decoder #(
+        .AXI_ID_WIDTH(AXI_ID_WIDTH),
+        .AXI_PORT_NUM(AXI_MASTER_PORT)
+    ) master_write_id (
+        .id_i (mst_write_resp_decode_id),
+        .gnt_o(mst_write_resp_decode_trgt)
+    );
+
+    axi_id_decoder #(
+        .AXI_ID_WIDTH(AXI_ID_WIDTH),
+        .AXI_PORT_NUM(AXI_MASTER_PORT)
+    ) master_read_id (
+        .id_i (mst_read_resp_decode_id),
+        .gnt_o(mst_read_resp_decode_trgt)
+    );
 
 endmodule
