@@ -12,7 +12,7 @@ module mux #(
     generate
         for (i = 0; i < PORT_NUM; i = i + 1) begin : g_data_mux_cascade
             assign data_mux_cascade[i] =
-                ctrl_i[i] ? data_i[(i+1)*DATA_WIDTH-1:i*DATA_WIDTH] : data_mux_cascade[i];
+                ctrl_i[i] ? data_i[(i+1)*DATA_WIDTH-1:i*DATA_WIDTH] : data_mux_cascade[i + 1];
         end
     endgenerate
     assign data_mux_cascade[PORT_NUM] = 'd0;

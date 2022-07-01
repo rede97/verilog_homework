@@ -4,7 +4,7 @@ module axi_crossbar #(
     // Width of S_AXI data bus
     parameter integer AXI_DATA_WIDTH = 32,
     // Width of S_AXI address bus
-    parameter integer AXI_ADDR_WIDTH = 8,
+    parameter integer AXI_ADDR_WIDTH = 32,
     // Slave interface number
     parameter integer AXI_SLAVE_PORT = 1,
     // Master interface number
@@ -173,7 +173,7 @@ module axi_crossbar #(
         .M_AXI_WCH_o       (LINK_AXI_WCH),
         .M_AXI_WCH_VALID_o (LINK_AXI_WCH_VALID),
         .M_AXI_WCH_READY_i (LINK_AXI_WCH_READY),
-        .M_AXI_BCH_o       (LINK_AXI_BCH),
+        .M_AXI_BCH_i       (LINK_AXI_BCH),
         .M_AXI_BCH_VALID_i (LINK_AXI_BCH_VALID),
         .M_AXI_BCH_READY_o (LINK_AXI_BCH_READY),
         .M_AXI_ARCH_o      (LINK_AXI_ARCH),
@@ -190,6 +190,8 @@ module axi_crossbar #(
         .AXI_ADDR_WIDTH(AXI_ADDR_WIDTH),
         .AXI_MASTER_PORT(AXI_MASTER_PORT)
     ) axi_slave_router_0 (
+        .ACLK              (ACLK),
+        .ARESETN           (ARESETN),
         .M_AXI_AWID        (M_AXI_AWID),
         .M_AXI_AWADDR      (M_AXI_AWADDR),
         .M_AXI_AWLEN       (M_AXI_AWLEN),

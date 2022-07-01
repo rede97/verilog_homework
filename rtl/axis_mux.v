@@ -35,7 +35,7 @@ module axis_mux #(
     demux #(
         .DATA_WIDTH(1),
         .PORT_NUM  (PORT_NUM)
-    ) axi_vld_demux (
+    ) axi_rdy_demux (
         .ctrl_i(mux_ctrl_i),
         .data_i(m_axi_rdy_i),
         .data_o(s_axi_rdy_o)
