@@ -8,7 +8,7 @@ module axi_slave #(
     // Do not modify the parameters beyond this line
 
     // Width of ID for for write address, write data, read address and read data
-    parameter integer AXI_ID_WIDTH = 1,
+    parameter integer AXI_ID_WIDTH   = 1,
     // Width of S_AXI data bus
     parameter integer AXI_DATA_WIDTH = 32,
     // Width of S_AXI address bus
@@ -432,12 +432,15 @@ module axi_slave #(
         end
     end
 
-    always @(*) begin
+    always @(posedge S_AXI_ACLK) begin
         if (axi_rvalid) begin
             // Read address mux
             axi_rdata <= 'd0;
         end else begin
-            axi_rdata <= 'd0;
+            axi_rdata <= axi_araddr;
+            if (S_AXI_RREADY && axi_rvalid) begin
+                $display("read: [0x%x] = 0x%x", axi_araddr, axi_araddr);
+            end
         end
     end
 

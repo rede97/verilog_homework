@@ -430,7 +430,10 @@ module axi_crossbar_tb;
         axi_wbuffer[31] = 32'h00020000;
         axi_write(16, 32, BURST_INC);
         axi_wait(4);
-        $display("===TESTPASS===");
+
+        $display("===Write TESTPASS===");
+        axi_read(16, 32, BURST_INC);
+        $display("===Read TESTPASS===");
 
         $finish;
     end

@@ -117,8 +117,10 @@ module axi_master_router #(
 
     // Read channel decoder signals
     wire                        read_channel_ready;
+    reg  [  AXI_SLAVE_PORT-1:0] read_channel_decoder_trgt;
+    reg  [                 1:0] read_channel_transfer_flag;
     wire [  AXI_SLAVE_PORT-1:0] ar_channel_decoder_trgt;
-    reg  [  AXI_SLAVE_PORT-1:0] rd_channel_decoder_trgt;
+    wire [  AXI_SLAVE_PORT-1:0] rd_channel_decoder_trgt;
 
     // AR-Channel FIFO read signals
     wire [AXI_ARCHAN_WIDTH-1:0] ar_chan_fifo_dat;
@@ -139,8 +141,9 @@ module axi_master_router #(
     assign wb_channel_decoder_trgt = write_channel_tranfer_flag[2] ? write_channel_decoder_trgt:'d0;
     assign slv_write_decode_addr = aw_chan_fifo_vld && aw_chan_fifo_dat[AXI_ADDR_WIDTH-1:0];
     // Read channel
-    assign read_channel_ready = rd_channel_decoder_trgt == 0;
-    assign ar_channel_decoder_trgt = read_channel_ready ? slv_read_decode_trgt : 'd0;
+    assign read_channel_ready = read_channel_transfer_flag == 0;
+    assign ar_channel_decoder_trgt = (read_channel_ready || read_channel_transfer_flag[0]) ? slv_read_decode_trgt : 'd0;
+    assign rd_channel_decoder_trgt = read_channel_transfer_flag[1] ? read_channel_decoder_trgt : 'd0;
     assign slv_read_decode_addr = ar_chan_fifo_dat[AXI_ADDR_WIDTH-1:0];
 
     // Update write channel decoder_trgt
@@ -169,13 +172,18 @@ module axi_master_router #(
     // Update read channel decoder_trgt
     always @(posedge ACLK or negedge ARESETN) begin
         if (!ARESETN) begin
-            rd_channel_decoder_trgt <= 'd0;
+            read_channel_decoder_trgt  <= 'd0;
+            read_channel_transfer_flag <= 2'b0;
         end else begin
-            if (read_channel_ready) begin
-                rd_channel_decoder_trgt <= slv_read_decode_trgt;
+            if (ar_chan_fifo_vld && read_channel_ready) begin
+                read_channel_decoder_trgt  <= slv_read_decode_trgt;
+                read_channel_transfer_flag <= 2'b11;
             end else begin
-                if (S_AXI_BVALID && S_AXI_BREADY) begin
-                    rd_channel_decoder_trgt <= 'd0;
+                if (aw_chan_fifo_rdy) begin
+                    read_channel_transfer_flag[0] <= 1'b0;
+                end
+                if (M_AXI_RCH_VALID_i && M_AXI_RCH_READY_o && M_AXI_RCH_i[AXI_ID_WIDTH]) begin
+                    read_channel_transfer_flag[1] <= 1'b0;
                 end
             end
         end
