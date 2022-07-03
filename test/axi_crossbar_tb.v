@@ -434,7 +434,7 @@ module axi_crossbar_tb;
         $display("===Write TESTPASS===");
         axi_read(16, 32, BURST_INC);
         $display("===Read TESTPASS===");
-
+        axi_wait(16);
         $finish;
     end
 endmodule

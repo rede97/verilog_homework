@@ -435,12 +435,12 @@ module axi_slave #(
     always @(posedge S_AXI_ACLK) begin
         if (axi_rvalid) begin
             // Read address mux
+            if (S_AXI_RREADY) begin
+                $display("read: [0x%x] = 0x%x", axi_araddr, axi_rdata);
+            end
             axi_rdata <= 'd0;
         end else begin
             axi_rdata <= axi_araddr;
-            if (S_AXI_RREADY && axi_rvalid) begin
-                $display("read: [0x%x] = 0x%x", axi_araddr, axi_araddr);
-            end
         end
     end
 

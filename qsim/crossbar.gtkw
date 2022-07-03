@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
-[*] Sat Jul 02 19:45:33 2022
+[*] Sun Jul 03 07:17:25 2022
 [*]
 [dumpfile] "D:\code\homework\qsim\sim\out\axi_crossbar_tb.vcd"
-[dumpfile_mtime] "Sat Jul 02 19:34:16 2022"
-[dumpfile_size] 284323
+[dumpfile_mtime] "Sun Jul 03 07:15:59 2022"
+[dumpfile_size] 198309
 [savefile] "D:\code\homework\qsim\crossbar.gtkw"
-[timestart] 0
+[timestart] 586930
 [size] 2560 1361
-[pos] 2550 -10
-*-18.000000 1682000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] -1 -1
+*-13.000000 626410 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] axi_crossbar_tb.
 [treeopen] axi_crossbar_tb.axi_crossbar.
 [treeopen] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.axi_aw_mux.
@@ -62,21 +62,13 @@ axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_READY_i[0]
 axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_VALID_o[0]
 @22
 #{axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[45:0]} axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[45] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[44] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[43] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[42] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[41] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[40] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[39] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[38] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[37] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[36] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[35] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[34] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[33] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[32] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[31] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[30] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[29] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[28] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[27] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[26] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[25] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[24] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[23] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[22] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[21] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[20] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[19] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[18] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[17] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[16] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[15] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[14] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[13] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[12] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[11] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[10] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[9] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[8] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[7] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[6] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[5] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[4] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[3] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[2] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[1] axi_crossbar_tb.axi_crossbar.axi_master_router_0.M_AXI_ARCH_o[0]
+@23
+#{axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[31:0]} axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[31] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[30] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[29] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[28] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[27] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[26] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[25] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[24] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[23] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[22] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[21] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[20] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[19] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[18] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[17] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[16] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[15] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[14] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[13] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[12] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[11] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[10] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[9] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[8] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[7] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[6] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[5] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[4] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[3] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[2] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[1] axi_crossbar_tb.axi_crossbar.M_AXI_RDATA[0]
 @28
-axi_crossbar_tb.axi_crossbar.axi_master_router_0.axi_ar_demux.s_axi_rdy_o
-axi_crossbar_tb.axi_crossbar.axi_master_router_0.axi_ar_demux.s_axi_vld_i
-axi_crossbar_tb.axi_crossbar.axi_master_router_0.axi_ar_demux.m_axi_vld_o[0]
-axi_crossbar_tb.axi_crossbar.axi_master_router_0.axi_ar_demux.m_axi_rdy_i[0]
-axi_crossbar_tb.axi_crossbar.axi_slave_router_0.M_AXI_RID[0]
-axi_crossbar_tb.axi_crossbar.axi_slave_router_0.M_AXI_RLAST
-axi_crossbar_tb.axi_crossbar.axi_slave_router_0.M_AXI_RREADY
-#{axi_crossbar_tb.axi_crossbar.axi_slave_router_0.M_AXI_RRESP[1:0]} axi_crossbar_tb.axi_crossbar.axi_slave_router_0.M_AXI_RRESP[1] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.M_AXI_RRESP[0]
-axi_crossbar_tb.axi_crossbar.axi_slave_router_0.M_AXI_RVALID
-@29
-axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_READY_i[0]
-@28
-axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_VALID_o[0]
-@22
-#{axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[35:0]} axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[35] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[34] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[33] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[32] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[31] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[30] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[29] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[28] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[27] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[26] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[25] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[24] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[23] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[22] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[21] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[20] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[19] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[18] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[17] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[16] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[15] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[14] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[13] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[12] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[11] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[10] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[9] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[8] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[7] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[6] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[5] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[4] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[3] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[2] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[1] axi_crossbar_tb.axi_crossbar.axi_slave_router_0.S_AXI_RCH_o[0]
+axi_crossbar_tb.axi_crossbar.M_AXI_RID[0]
+axi_crossbar_tb.axi_crossbar.M_AXI_RLAST
+axi_crossbar_tb.axi_crossbar.M_AXI_RREADY
+#{axi_crossbar_tb.axi_crossbar.M_AXI_RRESP[1:0]} axi_crossbar_tb.axi_crossbar.M_AXI_RRESP[1] axi_crossbar_tb.axi_crossbar.M_AXI_RRESP[0]
+axi_crossbar_tb.axi_crossbar.M_AXI_RVALID
 [pattern_trace] 1
 [pattern_trace] 0
