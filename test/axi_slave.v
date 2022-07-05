@@ -12,7 +12,8 @@ module axi_slave #(
     // Width of S_AXI data bus
     parameter integer AXI_DATA_WIDTH = 32,
     // Width of S_AXI address bus
-    parameter integer AXI_ADDR_WIDTH = 8
+    parameter integer AXI_ADDR_WIDTH = 8,
+    parameter integer AXI_SLAVE_ID   = 0
 ) (
     // Users to add ports here
     output wire irq_hash_finish,
@@ -426,7 +427,7 @@ module axi_slave #(
         if (!S_AXI_ARESETN) begin
         end else begin
             if (reg_write_en) begin
-                $display("write: [0x%x] = 0x%x", axi_awaddr, S_AXI_WDATA);
+                $display("write [%0d<-%0d]: [0x%x] = 0x%x", AXI_SLAVE_ID, S_AXI_AWID, axi_awaddr, S_AXI_WDATA);
             end else begin
             end
         end
@@ -436,7 +437,7 @@ module axi_slave #(
         if (axi_rvalid) begin
             // Read address mux
             if (S_AXI_RREADY) begin
-                $display("read: [0x%x] = 0x%x", axi_araddr, axi_rdata);
+                $display("read [%0d->%0d]: [0x%x] = 0x%x", AXI_SLAVE_ID, S_AXI_ARID, axi_araddr, axi_rdata);
             end
             axi_rdata <= 'd0;
         end else begin

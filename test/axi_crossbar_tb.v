@@ -54,43 +54,43 @@ module axi_crossbar_tb;
 
 
     // write address channel
-    wire [      AXI_ID_WIDTH-1:0] s0_axi_awid;
-    wire [    AXI_ADDR_WIDTH-1:0] s0_axi_awaddr;
-    wire [                   7:0] s0_axi_awlen;
-    wire [                   2:0] s0_axi_awsize;
-    wire [                   1:0] s0_axi_awburst;
-    wire                          s0_axi_awvalid;
-    wire                          s0_axi_awready;
+    wire [      AXI_ID_WIDTH-1:0] s_axi_awid   [1:0];
+    wire [    AXI_ADDR_WIDTH-1:0] s_axi_awaddr [1:0];
+    wire [                   7:0] s_axi_awlen  [1:0];
+    wire [                   2:0] s_axi_awsize [1:0];
+    wire [                   1:0] s_axi_awburst[1:0];
+    wire                          s_axi_awvalid[1:0];
+    wire                          s_axi_awready[1:0];
 
     // write data channel
-    wire [    AXI_DATA_WIDTH-1:0] s0_axi_wdata;
-    wire [(AXI_DATA_WIDTH/8)-1:0] s0_axi_wstrb;
-    wire                          s0_axi_wlast;
-    wire                          s0_axi_wvalid;
-    wire                          s0_axi_wready;
+    wire [    AXI_DATA_WIDTH-1:0] s_axi_wdata  [1:0];
+    wire [(AXI_DATA_WIDTH/8)-1:0] s_axi_wstrb  [1:0];
+    wire                          s_axi_wlast  [1:0];
+    wire                          s_axi_wvalid [1:0];
+    wire                          s_axi_wready [1:0];
 
     // write response channel
-    wire [      AXI_ID_WIDTH-1:0] s0_axi_bid;
-    wire [                   1:0] s0_axi_bresp;
-    wire                          s0_axi_bvalid;
-    wire                          s0_axi_bready;
+    wire [      AXI_ID_WIDTH-1:0] s_axi_bid    [1:0];
+    wire [                   1:0] s_axi_bresp  [1:0];
+    wire                          s_axi_bvalid [1:0];
+    wire                          s_axi_bready [1:0];
 
     // read address channel
-    wire [      AXI_ID_WIDTH-1:0] s0_axi_arid;
-    wire [    AXI_ADDR_WIDTH-1:0] s0_axi_araddr;
-    wire [                   7:0] s0_axi_arlen;
-    wire [                   2:0] s0_axi_arsize;
-    wire [                   1:0] s0_axi_arburst;
-    wire                          s0_axi_arvalid;
-    wire                          s0_axi_arready;
+    wire [      AXI_ID_WIDTH-1:0] s_axi_arid   [1:0];
+    wire [    AXI_ADDR_WIDTH-1:0] s_axi_araddr [1:0];
+    wire [                   7:0] s_axi_arlen  [1:0];
+    wire [                   2:0] s_axi_arsize [1:0];
+    wire [                   1:0] s_axi_arburst[1:0];
+    wire                          s_axi_arvalid[1:0];
+    wire                          s_axi_arready[1:0];
 
     // read data channel
-    wire [      AXI_ID_WIDTH-1:0] s0_axi_rid;
-    wire [    AXI_DATA_WIDTH-1:0] s0_axi_rdata;
-    wire [                   1:0] s0_axi_rresp;
-    wire                          s0_axi_rlast;
-    wire                          s0_axi_rvalid;
-    wire                          s0_axi_rready;
+    wire [      AXI_ID_WIDTH-1:0] s_axi_rid    [1:0];
+    wire [    AXI_DATA_WIDTH-1:0] s_axi_rdata  [1:0];
+    wire [                   1:0] s_axi_rresp  [1:0];
+    wire                          s_axi_rlast  [1:0];
+    wire                          s_axi_rvalid [1:0];
+    wire                          s_axi_rready [1:0];
 
     initial begin
         #0 aclk = 0;
@@ -129,7 +129,8 @@ module axi_crossbar_tb;
     axi_crossbar #(
         .AXI_ID_WIDTH  (AXI_ID_WIDTH),
         .AXI_DATA_WIDTH(AXI_DATA_WIDTH),
-        .AXI_ADDR_WIDTH(AXI_ADDR_WIDTH)
+        .AXI_ADDR_WIDTH(AXI_ADDR_WIDTH),
+        .AXI_SLAVE_PORT(2)
     ) axi_crossbar (
         .ACLK         (aclk),
         .ARESETN      (aresetn),
@@ -168,75 +169,81 @@ module axi_crossbar_tb;
         .S_AXI_RVALID (axi_rvalid),
         .S_AXI_RREADY (axi_rready),
         // Slave
-        .M_AXI_AWID   (s0_axi_awid),
-        .M_AXI_AWADDR (s0_axi_awaddr),
-        .M_AXI_AWLEN  (s0_axi_awlen),
-        .M_AXI_AWSIZE (s0_axi_awsize),
-        .M_AXI_AWBURST(s0_axi_awburst),
-        .M_AXI_AWVALID(s0_axi_awvalid),
-        .M_AXI_AWREADY(s0_axi_awready),
-        .M_AXI_WDATA  (s0_axi_wdata),
-        .M_AXI_WSTRB  (s0_axi_wstrb),
-        .M_AXI_WLAST  (s0_axi_wlast),
-        .M_AXI_WVALID (s0_axi_wvalid),
-        .M_AXI_WREADY (s0_axi_wready),
-        .M_AXI_BID    (s0_axi_bid),
-        .M_AXI_BRESP  (s0_axi_bresp),
-        .M_AXI_BVALID (s0_axi_bvalid),
-        .M_AXI_BREADY (s0_axi_bready),
-        .M_AXI_ARID   (s0_axi_arid),
-        .M_AXI_ARADDR (s0_axi_araddr),
-        .M_AXI_ARLEN  (s0_axi_arlen),
-        .M_AXI_ARSIZE (s0_axi_arsize),
-        .M_AXI_ARBURST(s0_axi_arburst),
-        .M_AXI_ARVALID(s0_axi_arvalid),
-        .M_AXI_ARREADY(s0_axi_arready),
-        .M_AXI_RID    (s0_axi_rid),
-        .M_AXI_RDATA  (s0_axi_rdata),
-        .M_AXI_RRESP  (s0_axi_rresp),
-        .M_AXI_RLAST  (s0_axi_rlast),
-        .M_AXI_RVALID (s0_axi_rvalid),
-        .M_AXI_RREADY (s0_axi_rready)
+        .M_AXI_AWID   ({s_axi_awid[1], s_axi_awid[0]}),
+        .M_AXI_AWADDR ({s_axi_awaddr[1], s_axi_awaddr[0]}),
+        .M_AXI_AWLEN  ({s_axi_awlen[1], s_axi_awlen[0]}),
+        .M_AXI_AWSIZE ({s_axi_awsize[1], s_axi_awsize[0]}),
+        .M_AXI_AWBURST({s_axi_awburst[1], s_axi_awburst[0]}),
+        .M_AXI_AWVALID({s_axi_awvalid[1], s_axi_awvalid[0]}),
+        .M_AXI_AWREADY({s_axi_awready[1], s_axi_awready[0]}),
+        .M_AXI_WDATA  ({s_axi_wdata[1], s_axi_wdata[0]}),
+        .M_AXI_WSTRB  ({s_axi_wstrb[1], s_axi_wstrb[0]}),
+        .M_AXI_WLAST  ({s_axi_wlast[1], s_axi_wlast[0]}),
+        .M_AXI_WVALID ({s_axi_wvalid[1], s_axi_wvalid[0]}),
+        .M_AXI_WREADY ({s_axi_wready[1], s_axi_wready[0]}),
+        .M_AXI_BID    ({s_axi_bid[1], s_axi_bid[0]}),
+        .M_AXI_BRESP  ({s_axi_bresp[1], s_axi_bresp[0]}),
+        .M_AXI_BVALID ({s_axi_bvalid[1], s_axi_bvalid[0]}),
+        .M_AXI_BREADY ({s_axi_bready[1], s_axi_bready[0]}),
+        .M_AXI_ARID   ({s_axi_arid[1], s_axi_arid[0]}),
+        .M_AXI_ARADDR ({s_axi_araddr[1], s_axi_araddr[0]}),
+        .M_AXI_ARLEN  ({s_axi_arlen[1], s_axi_arlen[0]}),
+        .M_AXI_ARSIZE ({s_axi_arsize[1], s_axi_arsize[0]}),
+        .M_AXI_ARBURST({s_axi_arburst[1], s_axi_arburst[0]}),
+        .M_AXI_ARVALID({s_axi_arvalid[1], s_axi_arvalid[0]}),
+        .M_AXI_ARREADY({s_axi_arready[1], s_axi_arready[0]}),
+        .M_AXI_RID    ({s_axi_rid[1], s_axi_rid[0]}),
+        .M_AXI_RDATA  ({s_axi_rdata[1], s_axi_rdata[0]}),
+        .M_AXI_RRESP  ({s_axi_rresp[1], s_axi_rresp[0]}),
+        .M_AXI_RLAST  ({s_axi_rlast[1], s_axi_rlast[0]}),
+        .M_AXI_RVALID ({s_axi_rvalid[1], s_axi_rvalid[0]}),
+        .M_AXI_RREADY ({s_axi_rready[1], s_axi_rready[0]})
     );
 
+    genvar i;
+    generate
+        for (i = 0; i < 2; i = i + 1) begin : g_slave
+            axi_slave #(
+                .AXI_ID_WIDTH  (AXI_ID_WIDTH),
+                .AXI_DATA_WIDTH(AXI_DATA_WIDTH),
+                .AXI_ADDR_WIDTH(AXI_ADDR_WIDTH),
+                .AXI_SLAVE_ID  (i)
+            ) axi_slave_0 (
+                .S_AXI_ACLK   (aclk),
+                .S_AXI_ARESETN(aresetn),
+                .S_AXI_AWID   (s_axi_awid[i]),
+                .S_AXI_AWADDR (s_axi_awaddr[i]),
+                .S_AXI_AWLEN  (s_axi_awlen[i]),
+                .S_AXI_AWSIZE (s_axi_awsize[i]),
+                .S_AXI_AWBURST(s_axi_awburst[i]),
+                .S_AXI_AWVALID(s_axi_awvalid[i]),
+                .S_AXI_AWREADY(s_axi_awready[i]),
+                .S_AXI_WDATA  (s_axi_wdata[i]),
+                .S_AXI_WSTRB  (s_axi_wstrb[i]),
+                .S_AXI_WLAST  (s_axi_wlast[i]),
+                .S_AXI_WVALID (s_axi_wvalid[i]),
+                .S_AXI_WREADY (s_axi_wready[i]),
+                .S_AXI_BID    (s_axi_bid[i]),
+                .S_AXI_BRESP  (s_axi_bresp[i]),
+                .S_AXI_BVALID (s_axi_bvalid[i]),
+                .S_AXI_BREADY (s_axi_bready[i]),
+                .S_AXI_ARID   (s_axi_arid[i]),
+                .S_AXI_ARADDR (s_axi_araddr[i]),
+                .S_AXI_ARLEN  (s_axi_arlen[i]),
+                .S_AXI_ARSIZE (s_axi_arsize[i]),
+                .S_AXI_ARBURST(s_axi_arburst[i]),
+                .S_AXI_ARVALID(s_axi_arvalid[i]),
+                .S_AXI_ARREADY(s_axi_arready[i]),
+                .S_AXI_RID    (s_axi_rid[i]),
+                .S_AXI_RDATA  (s_axi_rdata[i]),
+                .S_AXI_RRESP  (s_axi_rresp[i]),
+                .S_AXI_RLAST  (s_axi_rlast[i]),
+                .S_AXI_RVALID (s_axi_rvalid[i]),
+                .S_AXI_RREADY (s_axi_rready[i])
+            );
+        end
+    endgenerate
 
-    axi_slave #(
-        .AXI_ID_WIDTH  (AXI_ID_WIDTH),
-        .AXI_DATA_WIDTH(AXI_DATA_WIDTH),
-        .AXI_ADDR_WIDTH(AXI_ADDR_WIDTH)
-    ) axi_slave_0 (
-        .S_AXI_ACLK   (aclk),
-        .S_AXI_ARESETN(aresetn),
-        .S_AXI_AWID   (s0_axi_awid),
-        .S_AXI_AWADDR (s0_axi_awaddr),
-        .S_AXI_AWLEN  (s0_axi_awlen),
-        .S_AXI_AWSIZE (s0_axi_awsize),
-        .S_AXI_AWBURST(s0_axi_awburst),
-        .S_AXI_AWVALID(s0_axi_awvalid),
-        .S_AXI_AWREADY(s0_axi_awready),
-        .S_AXI_WDATA  (s0_axi_wdata),
-        .S_AXI_WSTRB  (s0_axi_wstrb),
-        .S_AXI_WLAST  (s0_axi_wlast),
-        .S_AXI_WVALID (s0_axi_wvalid),
-        .S_AXI_WREADY (s0_axi_wready),
-        .S_AXI_BID    (s0_axi_bid),
-        .S_AXI_BRESP  (s0_axi_bresp),
-        .S_AXI_BVALID (s0_axi_bvalid),
-        .S_AXI_BREADY (s0_axi_bready),
-        .S_AXI_ARID   (s0_axi_arid),
-        .S_AXI_ARADDR (s0_axi_araddr),
-        .S_AXI_ARLEN  (s0_axi_arlen),
-        .S_AXI_ARSIZE (s0_axi_arsize),
-        .S_AXI_ARBURST(s0_axi_arburst),
-        .S_AXI_ARVALID(s0_axi_arvalid),
-        .S_AXI_ARREADY(s0_axi_arready),
-        .S_AXI_RID    (s0_axi_rid),
-        .S_AXI_RDATA  (s0_axi_rdata),
-        .S_AXI_RRESP  (s0_axi_rresp),
-        .S_AXI_RLAST  (s0_axi_rlast),
-        .S_AXI_RVALID (s0_axi_rvalid),
-        .S_AXI_RREADY (s0_axi_rready)
-    );
 
     localparam BURST_FIXED = 2'b00, BURST_INC = 2'b01, BURST_WRAP = 2'b10;
 
@@ -296,7 +303,7 @@ module axi_crossbar_tb;
         input [1:0] burst;
         integer addr_cnt;
         begin
-            axi_araddr  <= {raddr, 2'b00};
+            axi_araddr  <= raddr;
             axi_arlen   <= rlen - 1;
             axi_arburst <= burst;
             axi_arsize  <= 3'b010;
@@ -335,7 +342,7 @@ module axi_crossbar_tb;
         input [1:0] burst;
         integer addr_cnt;
         begin
-            axi_awaddr <= {waddr, 2'b00};
+            axi_awaddr <= waddr;
             axi_awlen <= wlen - 1;
             axi_awburst <= burst;
             axi_awsize <= 3'b010;
@@ -428,11 +435,11 @@ module axi_crossbar_tb;
         axi_wbuffer[29] = 32'h00000000;
         axi_wbuffer[30] = 32'h00000000;
         axi_wbuffer[31] = 32'h00020000;
-        axi_write(16, 32, BURST_INC);
+        axi_write(32'h2000_0000, 32, BURST_INC);
         axi_wait(4);
 
         $display("===Write TESTPASS===");
-        axi_read(16, 32, BURST_INC);
+        axi_read(32'h0000_0000, 32, BURST_INC);
         $display("===Read TESTPASS===");
         axi_wait(16);
         $finish;

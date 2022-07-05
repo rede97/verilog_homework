@@ -149,7 +149,7 @@ module axi_crossbar #(
 
     genvar i, j;
     for (i = 0; i < AXI_MASTER_PORT; i = i + 1) begin : g_link_i
-        for (j = 0; j < AXI_MASTER_PORT; j = j + 1) begin : g_link_j
+        for (j = 0; j < AXI_SLAVE_PORT; j = j + 1) begin : g_link_j
             assign LINK_SLAVE_ROUTE_AXI_AWCH[j][AXI_AWCHAN_WIDTH*(i+1)-1:AXI_AWCHAN_WIDTH*i] =
                 LINK_MASTER_ROUTE_AXI_AWCH[i][AXI_AWCHAN_WIDTH*(j+1)-1: AXI_AWCHAN_WIDTH*j];
             assign LINK_SLAVE_ROUTE_AXI_AWCH_VALID[j][(i+1)-1:i] =

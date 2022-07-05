@@ -139,12 +139,12 @@ module axi_master_router #(
     assign aw_channel_decoder_trgt = (write_channel_ready || write_channel_tranfer_flag[0]) ? slv_write_decode_trgt : 'd0;
     assign wd_channel_decoder_trgt = write_channel_tranfer_flag[1] ? write_channel_decoder_trgt:'d0;
     assign wb_channel_decoder_trgt = write_channel_tranfer_flag[2] ? write_channel_decoder_trgt:'d0;
-    assign slv_write_decode_addr = aw_chan_fifo_vld && aw_chan_fifo_dat[AXI_ADDR_WIDTH-1:0];
+    assign slv_write_decode_addr = aw_chan_fifo_vld ? aw_chan_fifo_dat[AXI_ADDR_WIDTH-1:0] : 'd0;
     // Read channel
     assign read_channel_ready = read_channel_transfer_flag == 0;
     assign ar_channel_decoder_trgt = (read_channel_ready || read_channel_transfer_flag[0]) ? slv_read_decode_trgt : 'd0;
     assign rd_channel_decoder_trgt = read_channel_transfer_flag[1] ? read_channel_decoder_trgt : 'd0;
-    assign slv_read_decode_addr = ar_chan_fifo_dat[AXI_ADDR_WIDTH-1:0];
+    assign slv_read_decode_addr = ar_chan_fifo_vld ? ar_chan_fifo_dat[AXI_ADDR_WIDTH-1:0] : 'd0;
 
     // Update write channel decoder_trgt
     always @(posedge ACLK or negedge ARESETN) begin
