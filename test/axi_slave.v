@@ -16,7 +16,6 @@ module axi_slave #(
     parameter integer AXI_SLAVE_ID   = 0
 ) (
     // Users to add ports here
-    output wire irq_hash_finish,
     // User ports ends
     // Do not modify the ports beyond this line
 

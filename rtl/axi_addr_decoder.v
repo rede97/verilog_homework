@@ -9,5 +9,5 @@ module axi_addr_decoder #(
     output misrouting_o
 );
     assign misrouting_o = trgt_o == 0;
-    assign trgt_o = (0 <= addr_i && addr_i < 32'h1000_0000) ? 'b01 : 'b10;
+    assign trgt_o = (addr_i < 32'h1000_0000) ? 'b001 : (addr_i < 32'h4000_0000) ? 'b010 : 'b100;
 endmodule
