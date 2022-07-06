@@ -116,12 +116,15 @@ module axi_master #(
                     while (addr_cnt < rlen) begin
                         axi_wait(1);
                         if (axi_rvalid) begin
-                            if (axi_rresp != 2'b00) begin
-                                $display("[%m]#%t ERROR: Invalid rresp: %d", $time, axi_bresp);
-                                $stop;
-                            end
                             axi_rbuffer[addr_cnt] = axi_rdata;
                             addr_cnt = addr_cnt + 1;
+                        end
+                    end
+                    if (axi_rresp != 2'b00) begin
+                        if (axi_rresp == 2'b10) begin
+                            $display("[%m]#%t Slave Error: 0x%08x", $time, raddr);
+                        end else if (axi_rresp == 2'b11) begin
+                            $display("[%m]#%t Decode Error: 0x%08x", $time, raddr);
                         end
                     end
                     axi_rclr;
@@ -260,10 +263,13 @@ module axi_master #(
         axi_wbuffer[31] = 32'h00020000;
         axi_write(32'h9000_0000, 32, BURST_INC);
         axi_wait(4);
+        axi_write(32'h1000_0000, 32, BURST_INC);
+
 
         $display("[%0d]===Write TESTPASS===", AXI_MASTER_ID);
-        axi_read(32'h0000_0000, 32, BURST_INC);
+        axi_read(32'h9000_0000, 8, BURST_INC);
         $display("[%0d]===Read TESTPASS===", AXI_MASTER_ID);
+        axi_read(32'h1000_0000, 32, BURST_INC);
         axi_wait(16);
         $finish;
     end

@@ -36,8 +36,9 @@ module axi_r_misrouting #(
     reg [7:0] counter;
 
     assign RDATA = 'd0;
-    assign ARID = S_AXI_ARCH_i[AXI_ARCHAN_WIDTH-1:AXI_ARCHAN_WIDTH-AXI_ID_WIDTH-1];
-    assign S_AXI_RCH_o = {RDATA, 2'b11, RLAST, ARID};
+    assign ARID = S_AXI_ARCH_i[AXI_ARCHAN_WIDTH-1:AXI_ARCHAN_WIDTH-AXI_ID_WIDTH];
+    assign ARLEN = S_AXI_ARCH_i[AXI_ARCHAN_WIDTH-AXI_ID_WIDTH-1:AXI_ARCHAN_WIDTH-AXI_ID_WIDTH-8];
+    assign S_AXI_RCH_o = {RDATA, RLAST ? 2'b11 : 2'b00, RLAST, ARID};
     assign RLAST = counter == ARLEN;
     assign rch_enrch_en = S_AXI_RCH_VALID_o && S_AXI_RCH_READY_i;
     assign misrouting_finish = RLAST && rch_enrch_en;

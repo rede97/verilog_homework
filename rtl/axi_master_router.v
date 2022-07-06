@@ -117,10 +117,10 @@ module axi_master_router #(
 
     // Read channel decoder signals
     wire                          read_channel_ready;
-    reg  [    AXI_SLAVE_PORT-1:0] read_channel_decoder_trgt;
+    reg  [      AXI_SLAVE_PORT:0] read_channel_decoder_trgt;
     reg  [                   1:0] read_channel_transfer_flag;
-    wire [    AXI_SLAVE_PORT-1:0] ar_channel_decoder_trgt;
-    wire [    AXI_SLAVE_PORT-1:0] rd_channel_decoder_trgt;
+    wire [      AXI_SLAVE_PORT:0] ar_channel_decoder_trgt;
+    wire [      AXI_SLAVE_PORT:0] rd_channel_decoder_trgt;
 
     // AR-Channel FIFO read signals
     wire [  AXI_ARCHAN_WIDTH-1:0] ar_chan_fifo_dat;
@@ -129,23 +129,33 @@ module axi_master_router #(
 
     // Read Address Decoder
     wire [    AXI_ADDR_WIDTH-1:0] slv_read_decode_addr;
-    wire [    AXI_SLAVE_PORT-1:0] slv_read_decode_trgt;
+    wire [      AXI_SLAVE_PORT:0] slv_read_decode_trgt;
     // Write Address Decoder
     wire [    AXI_ADDR_WIDTH-1:0] slv_write_decode_addr;
     wire [      AXI_SLAVE_PORT:0] slv_write_decode_trgt;
 
-    // Misrouting address channel
-    wire [AXI_AWCHAN_WIDTH-1 : 0] MR_W_AXI_AWCH_i;
-    wire                          MR_W_AXI_AWCH_VALID_i;
-    wire                          MR_W_AXI_AWCH_READY_o;
+    // Misrouting Write address channel
+    wire [AXI_AWCHAN_WIDTH-1 : 0] MR_W_AXI_AWCH;
+    wire                          MR_W_AXI_AWCH_VALID;
+    wire                          MR_W_AXI_AWCH_READY;
     // Misrouting Write data channel
-    wire [AXI_WDCHAN_WIDTH-1 : 0] MR_W_AXI_WCH_i;
-    wire                          MR_W_AXI_WCH_VALID_i;
-    wire                          MR_W_AXI_WCH_READY_o;
+    wire [AXI_WDCHAN_WIDTH-1 : 0] MR_W_AXI_WCH;
+    wire                          MR_W_AXI_WCH_VALID;
+    wire                          MR_W_AXI_WCH_READY;
     // Misrouting Write response channel
-    wire [AXI_WBCHAN_WIDTH-1 : 0] MR_W_AXI_BCH_o;
-    wire                          MR_W_AXI_BCH_VALID_o;
-    wire                          MR_W_AXI_BCH_READY_i;
+    wire [AXI_WBCHAN_WIDTH-1 : 0] MR_W_AXI_BCH;
+    wire                          MR_W_AXI_BCH_VALID;
+    wire                          MR_W_AXI_BCH_READY;
+
+    // Misrouting Read address channel
+    wire [AXI_ARCHAN_WIDTH-1 : 0] MR_R_AXI_ARCH;
+    wire                          MR_R_AXI_ARCH_VALID;
+    wire                          MR_R_AXI_ARCH_READY;
+    // Misrouting Read data channel
+    wire [AXI_RDCHAN_WIDTH-1 : 0] MR_R_AXI_RCH;
+    wire                          MR_R_AXI_RCH_VALID;
+    wire                          MR_R_AXI_RCH_READY;
+
 
     // Write channel
     assign write_channel_ready = write_channel_tranfer_flag == 0;
@@ -175,7 +185,7 @@ module axi_master_router #(
                 if (wd_chan_fifo_rdy && wd_chan_fifo_dat[0]) begin
                     write_channel_tranfer_flag[1] <= 'b0;
                 end
-                if (M_AXI_BCH_VALID_i && M_AXI_BCH_READY_o) begin
+                if (S_AXI_BVALID && S_AXI_BREADY) begin
                     write_channel_tranfer_flag[2] <= 'b0;
                 end
             end
@@ -192,10 +202,10 @@ module axi_master_router #(
                 read_channel_decoder_trgt  <= slv_read_decode_trgt;
                 read_channel_transfer_flag <= 2'b11;
             end else begin
-                if (aw_chan_fifo_rdy) begin
+                if (ar_chan_fifo_rdy) begin
                     read_channel_transfer_flag[0] <= 1'b0;
                 end
-                if (M_AXI_RCH_VALID_i && M_AXI_RCH_READY_o && M_AXI_RCH_i[AXI_ID_WIDTH]) begin
+                if (S_AXI_RLAST && S_AXI_RVALID && S_AXI_RREADY) begin
                     read_channel_transfer_flag[1] <= 1'b0;
                 end
             end
@@ -266,9 +276,9 @@ module axi_master_router #(
         .s_axi_dat_i (aw_chan_fifo_dat),
         .s_axi_vld_i (aw_chan_fifo_vld),
         .s_axi_rdy_o (aw_chan_fifo_rdy),
-        .m_axi_dat_o ({MR_W_AXI_AWCH_i, M_AXI_AWCH_o}),
-        .m_axi_vld_o ({MR_W_AXI_AWCH_VALID_i, M_AXI_AWCH_VALID_o}),
-        .m_axi_rdy_i ({MR_W_AXI_AWCH_READY_o, M_AXI_AWCH_READY_i})
+        .m_axi_dat_o ({MR_W_AXI_AWCH, M_AXI_AWCH_o}),
+        .m_axi_vld_o ({MR_W_AXI_AWCH_VALID, M_AXI_AWCH_VALID_o}),
+        .m_axi_rdy_i ({MR_W_AXI_AWCH_READY, M_AXI_AWCH_READY_i})
     );
 
     // WD-Channel demux
@@ -280,9 +290,9 @@ module axi_master_router #(
         .s_axi_dat_i (wd_chan_fifo_dat),
         .s_axi_vld_i (wd_chan_fifo_vld),
         .s_axi_rdy_o (wd_chan_fifo_rdy),
-        .m_axi_dat_o ({MR_W_AXI_WCH_i, M_AXI_WCH_o}),
-        .m_axi_vld_o ({MR_W_AXI_WCH_VALID_i, M_AXI_WCH_VALID_o}),
-        .m_axi_rdy_i ({MR_W_AXI_WCH_READY_o, M_AXI_WCH_READY_i})
+        .m_axi_dat_o ({MR_W_AXI_WCH, M_AXI_WCH_o}),
+        .m_axi_vld_o ({MR_W_AXI_WCH_VALID, M_AXI_WCH_VALID_o}),
+        .m_axi_rdy_i ({MR_W_AXI_WCH_READY, M_AXI_WCH_READY_i})
     );
 
     // WB-Channel mux
@@ -291,9 +301,9 @@ module axi_master_router #(
         .PORT_NUM  (AXI_SLAVE_PORT + 1)
     ) axi_wb_mux (
         .mux_ctrl_i (wb_channel_decoder_trgt),
-        .s_axi_dat_i({MR_W_AXI_BCH_o, M_AXI_BCH_i}),
-        .s_axi_vld_i({MR_W_AXI_BCH_VALID_o, M_AXI_BCH_VALID_i}),
-        .s_axi_rdy_o({MR_W_AXI_BCH_READY_i, M_AXI_BCH_READY_o}),
+        .s_axi_dat_i({MR_W_AXI_BCH, M_AXI_BCH_i}),
+        .s_axi_vld_i({MR_W_AXI_BCH_VALID, M_AXI_BCH_VALID_i}),
+        .s_axi_rdy_o({MR_W_AXI_BCH_READY, M_AXI_BCH_READY_o}),
         .m_axi_dat_o({S_AXI_BRESP, S_AXI_BID}),
         .m_axi_vld_o(S_AXI_BVALID),
         .m_axi_rdy_i(S_AXI_BREADY)
@@ -302,26 +312,26 @@ module axi_master_router #(
     // AR-Channel demux
     axis_demux #(
         .DATA_WIDTH(AXI_ARCHAN_WIDTH),
-        .PORT_NUM  (AXI_SLAVE_PORT)
+        .PORT_NUM  (AXI_SLAVE_PORT + 1)
     ) axi_ar_demux (
         .demux_ctrl_i(ar_channel_decoder_trgt),
         .s_axi_dat_i (ar_chan_fifo_dat),
         .s_axi_vld_i (ar_chan_fifo_vld),
         .s_axi_rdy_o (ar_chan_fifo_rdy),
-        .m_axi_dat_o (M_AXI_ARCH_o),
-        .m_axi_vld_o (M_AXI_ARCH_VALID_o),
-        .m_axi_rdy_i (M_AXI_ARCH_READY_i)
+        .m_axi_dat_o ({MR_R_AXI_ARCH, M_AXI_ARCH_o}),
+        .m_axi_vld_o ({MR_R_AXI_ARCH_VALID, M_AXI_ARCH_VALID_o}),
+        .m_axi_rdy_i ({MR_R_AXI_ARCH_READY, M_AXI_ARCH_READY_i})
     );
 
     // RD-Channel mux
     axis_mux #(
         .DATA_WIDTH(AXI_RDCHAN_WIDTH),
-        .PORT_NUM  (AXI_SLAVE_PORT)
+        .PORT_NUM  (AXI_SLAVE_PORT + 1)
     ) axi_rd_mux (
         .mux_ctrl_i (rd_channel_decoder_trgt),
-        .s_axi_dat_i(M_AXI_RCH_i),
-        .s_axi_vld_i(M_AXI_RCH_VALID_i),
-        .s_axi_rdy_o(M_AXI_RCH_READY_o),
+        .s_axi_dat_i({MR_R_AXI_RCH, M_AXI_RCH_i}),
+        .s_axi_vld_i({MR_R_AXI_RCH_VALID, M_AXI_RCH_VALID_i}),
+        .s_axi_rdy_o({MR_R_AXI_RCH_READY, M_AXI_RCH_READY_o}),
         .m_axi_dat_o({S_AXI_RDATA, S_AXI_RRESP, S_AXI_RLAST, S_AXI_RID}),
         .m_axi_vld_o(S_AXI_RVALID),
         .m_axi_rdy_i(S_AXI_RREADY)
@@ -332,15 +342,32 @@ module axi_master_router #(
         .AXI_DATA_WIDTH(AXI_DATA_WIDTH),
         .AXI_ADDR_WIDTH(AXI_ADDR_WIDTH)
     ) write_misrouting_port (
-        .S_AXI_AWCH_i(MR_W_AXI_AWCH_i),
-        .S_AXI_AWCH_VALID_i(MR_W_AXI_AWCH_VALID_i),
-        .S_AXI_AWCH_READY_o(MR_W_AXI_AWCH_READY_o),
-        .S_AXI_WCH_i(MR_W_AXI_WCH_i),
-        .S_AXI_WCH_VALID_i(MR_W_AXI_WCH_VALID_i),
-        .S_AXI_WCH_READY_o(MR_W_AXI_WCH_READY_o),
-        .S_AXI_BCH_o(MR_W_AXI_BCH_o),
-        .S_AXI_BCH_VALID_o(MR_W_AXI_BCH_VALID_o),
-        .S_AXI_BCH_READY_i(MR_W_AXI_BCH_READY_i)
+        .ACLK(ACLK),
+        .ARESETN(ARESETN),
+        .S_AXI_AWCH_i(MR_W_AXI_AWCH),
+        .S_AXI_AWCH_VALID_i(MR_W_AXI_AWCH_VALID),
+        .S_AXI_AWCH_READY_o(MR_W_AXI_AWCH_READY),
+        .S_AXI_WCH_i(MR_W_AXI_WCH),
+        .S_AXI_WCH_VALID_i(MR_W_AXI_WCH_VALID),
+        .S_AXI_WCH_READY_o(MR_W_AXI_WCH_READY),
+        .S_AXI_BCH_o(MR_W_AXI_BCH),
+        .S_AXI_BCH_VALID_o(MR_W_AXI_BCH_VALID),
+        .S_AXI_BCH_READY_i(MR_W_AXI_BCH_READY)
+    );
+
+    axi_r_misrouting #(
+        .AXI_ID_WIDTH  (AXI_ID_WIDTH),
+        .AXI_DATA_WIDTH(AXI_DATA_WIDTH),
+        .AXI_ADDR_WIDTH(AXI_ADDR_WIDTH)
+    ) read_misrouting_port (
+        .ACLK(ACLK),
+        .ARESETN(ARESETN),
+        .S_AXI_ARCH_i(MR_R_AXI_ARCH),
+        .S_AXI_ARCH_VALID_i(MR_R_AXI_ARCH_VALID),
+        .S_AXI_ARCH_READY_o(MR_R_AXI_ARCH_READY),
+        .S_AXI_RCH_o(MR_R_AXI_RCH),
+        .S_AXI_RCH_VALID_o(MR_R_AXI_RCH_VALID),
+        .S_AXI_RCH_READY_i(MR_R_AXI_RCH_READY)
     );
 
     axi_addr_decoder #(
