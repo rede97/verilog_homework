@@ -175,8 +175,11 @@ module axi_master #(
                     axi_wait(1);
                     if (axi_bvalid) begin
                         if (axi_bresp != 2'b00) begin
-                            $display("[%m]#%t ERROR: Invalid bresp: %d", $time, axi_bresp);
-                            $stop;
+                            if (axi_bresp == 2'b10) begin
+                                $display("[%m]#%t Slave Error: 0x%08x", $time, waddr);
+                            end else if (axi_bresp == 2'b11) begin
+                                $display("[%m]#%t Decode Error: 0x%08x", $time, waddr);
+                            end
                         end
                         axi_bready <= 1'b1;
                         axi_wait(1);
@@ -255,7 +258,7 @@ module axi_master #(
         axi_wbuffer[29] = 32'h00000000;
         axi_wbuffer[30] = 32'h00000000;
         axi_wbuffer[31] = 32'h00020000;
-        axi_write(32'h8000_0000, 32, BURST_INC);
+        axi_write(32'h9000_0000, 32, BURST_INC);
         axi_wait(4);
 
         $display("[%0d]===Write TESTPASS===", AXI_MASTER_ID);

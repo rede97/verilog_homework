@@ -8,7 +8,6 @@ module axi_slave_router #(
     // Master interface number
     parameter integer AXI_MASTER_PORT = 2,
     // AXI_ID_WIDTH + AXI_ADDR_WIDTH + S_AXI_AWLEN + S_AXI_AWSIZE + S_AXI_AWBURST
-
     parameter integer AXI_AWCHAN_WIDTH = AXI_ID_WIDTH + AXI_ADDR_WIDTH + 8 + 3 + 2,
     // AXI_DATA_WIDTH + S_AXI_WSTRB + S_AXI_WLAST
     parameter integer AXI_WDCHAN_WIDTH = AXI_DATA_WIDTH + (AXI_DATA_WIDTH / 8) + 1,
