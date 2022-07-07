@@ -7,5 +7,23 @@ module axi_id_decoder #(
     input  wire [AXI_ID_WIDTH-1:0] id_i,
     output wire [AXI_PORT_NUM-1:0] gnt_o
 );
-    assign gnt_o = 'b1;
+    reg [AXI_PORT_NUM-1:0] gnt;
+    assign gnt_o = gnt;
+    always @(*) begin
+        case (id_i)
+            'd0: begin
+                gnt = 3'b001;
+            end
+            'd1: begin
+                gnt = 3'b010;
+            end
+            'd2: begin
+                gnt = 3'b100;
+            end
+            default: begin
+                $display("Error: invalid id %0d", id_i);
+                $stop;
+            end
+        endcase
+    end
 endmodule

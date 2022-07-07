@@ -27,7 +27,7 @@ module axi_master #(
     input  wire                          axi_bvalid,
     output reg                           axi_bready,
     // read address channel
-    output reg  [      AXI_ID_WIDTH-1:0] axi_arid,
+    output wire [      AXI_ID_WIDTH-1:0] axi_arid,
     output reg  [    AXI_ADDR_WIDTH-1:0] axi_araddr,
     output reg  [                   7:0] axi_arlen,
     output reg  [                   2:0] axi_arsize,
@@ -40,9 +40,11 @@ module axi_master #(
     input  wire [                   1:0] axi_rresp,
     input  wire                          axi_rlast,
     input  wire                          axi_rvalid,
-    output reg                           axi_rready
+    output reg                           axi_rready,
+    output reg                           sim_finish
 );
     assign axi_awid = AXI_MASTER_ID;
+    assign axi_arid = AXI_MASTER_ID;
 
     task axi_wait;
         input integer n;
@@ -122,9 +124,9 @@ module axi_master #(
                     end
                     if (axi_rresp != 2'b00) begin
                         if (axi_rresp == 2'b10) begin
-                            $display("[%m]#%t Slave Error: 0x%08x", $time, raddr);
+                            $display("[%m]#%t Read Slave Error: 0x%08x", $time, raddr);
                         end else if (axi_rresp == 2'b11) begin
-                            $display("[%m]#%t Decode Error: 0x%08x", $time, raddr);
+                            $display("[%m]#%t Read Decode Error: 0x%08x", $time, raddr);
                         end
                     end
                     axi_rclr;
@@ -174,14 +176,14 @@ module axi_master #(
                 axi_wait(1);
                 axi_wclr;
                 // wait bresp
-                repeat (16) begin
+                while (1) begin
                     axi_wait(1);
                     if (axi_bvalid) begin
                         if (axi_bresp != 2'b00) begin
                             if (axi_bresp == 2'b10) begin
-                                $display("[%m]#%t Slave Error: 0x%08x", $time, waddr);
+                                $display("[%m]#%t Write Slave Error: 0x%08x", $time, waddr);
                             end else if (axi_bresp == 2'b11) begin
-                                $display("[%m]#%t Decode Error: 0x%08x", $time, waddr);
+                                $display("[%m]#%t Write Decode Error: 0x%08x", $time, waddr);
                             end
                         end
                         axi_bready <= 1'b1;
@@ -202,31 +204,31 @@ module axi_master #(
     localparam integer BURST_FIXED = 2'b00, BURST_INC = 2'b01, BURST_WRAP = 2'b10;
 
     initial begin
-        axi_awaddr = 0;
-        axi_awlen = 0;
-        axi_awsize = 0;
+        axi_awaddr  = 0;
+        axi_awlen   = 0;
+        axi_awsize  = 0;
         axi_awburst = 0;
         axi_awvalid = 0;
 
-        axi_wdata = 0;
-        axi_wstrb = 0;
-        axi_wlast = 0;
-        axi_wvalid = 0;
+        axi_wdata   = 0;
+        axi_wstrb   = 0;
+        axi_wlast   = 0;
+        axi_wvalid  = 0;
 
-        axi_bready = 0;
+        axi_bready  = 0;
 
-        axi_arid = 0;
-        axi_araddr = 0;
-        axi_arlen = 0;
-        axi_arsize = 0;
+        axi_araddr  = 0;
+        axi_arlen   = 0;
+        axi_arsize  = 0;
         axi_arburst = 0;
 
         axi_arvalid = 0;
-        axi_rready = 0;
+        axi_rready  = 0;
     end
 
     integer idx;
     initial begin
+        sim_finish <= 'b0;
         wait (aresetn == 1);
         repeat (5) @(posedge aclk);
         axi_wbuffer[0]  = 32'h64343962;
@@ -267,11 +269,13 @@ module axi_master #(
 
 
         $display("[%0d]===Write TESTPASS===", AXI_MASTER_ID);
-        axi_read(32'h9000_0000, 8, BURST_INC);
+        axi_read(32'he000_0000, 8, BURST_INC);
         $display("[%0d]===Read TESTPASS===", AXI_MASTER_ID);
-        axi_read(32'h1000_0000, 32, BURST_INC);
+        axi_read(32'h4000_0000, 32, BURST_INC);
         axi_wait(16);
-        $finish;
+
+        $display("[%0d]FINISH", AXI_MASTER_ID);
+        sim_finish <= 'b1;
     end
 
 endmodule

@@ -256,7 +256,7 @@ module axi_crossbar #(
                 .AXI_DATA_WIDTH(AXI_DATA_WIDTH),
                 .AXI_ADDR_WIDTH(AXI_ADDR_WIDTH),
                 .AXI_MASTER_PORT(AXI_MASTER_PORT)
-            ) axi_slave_router_0 (
+            ) axi_slave_router (
                 .ACLK              (ACLK),
                 .ARESETN           (ARESETN),
                 .M_AXI_AWID        (M_AXI_AWID[AXI_ID_WIDTH*(i+1)-1:AXI_ID_WIDTH*i]),

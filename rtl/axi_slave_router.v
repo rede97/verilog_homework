@@ -105,9 +105,12 @@ module axi_slave_router #(
     reg  [ AXI_MASTER_PORT-1:0] write_channel_arbiter_gnt;
     reg  [                 1:0] write_channel_transfer_flag;
 
-    // Read channel arboter
-    wire [ AXI_MASTER_PORT-1:0] read_channel_arbiter_gnt;
-    wire [ AXI_MASTER_PORT-1:0] ar_chan_arboter_gnt;
+    wire                        read_channel_ready;
+    reg                         read_channel_transfer_flag;
+    // Read channel arbiter
+    wire [ AXI_MASTER_PORT-1:0] mst_read_arbiter_gnt;
+    wire [ AXI_MASTER_PORT-1:0] ar_chan_arbiter_gnt;
+    reg  [ AXI_MASTER_PORT-1:0] read_channel_arbiter_gnt;
 
     // WB-Channel fifo read signal
     wire [AXI_WBCHAN_WIDTH-1:0] wb_chan_fifo_dat;
@@ -133,7 +136,9 @@ module axi_slave_router #(
 
     assign mst_write_resp_decode_id = wb_chan_fifo_dat[AXI_ID_WIDTH-1:0];
 
-    assign ar_chan_arboter_gnt = read_channel_arbiter_gnt;
+    assign read_channel_ready = read_channel_transfer_flag == 0;
+    assign ar_chan_arbiter_gnt = read_channel_ready ? mst_read_arbiter_gnt:
+                                read_channel_transfer_flag ? read_channel_arbiter_gnt : 'd0;
     assign mst_read_resp_decode_id = rd_chan_fifo_dat[AXI_ID_WIDTH-1:0];
 
     always @(posedge ACLK or negedge ARESETN) begin
@@ -145,12 +150,27 @@ module axi_slave_router #(
                 write_channel_arbiter_gnt   <= mst_write_arbiter_gnt;
                 write_channel_transfer_flag <= 2'b11;
             end else begin
-                if (M_AXI_AWREADY) begin
+                if (M_AXI_AWVALID && M_AXI_AWREADY) begin
                     write_channel_transfer_flag[0] <= 1'b0;
                 end
-                if (M_AXI_WLAST && M_AXI_WREADY) begin
+                if (M_AXI_WLAST && M_AXI_WVALID && M_AXI_WREADY) begin
                     write_channel_transfer_flag[1] <= 1'b0;
                 end
+            end
+        end
+    end
+
+    always @(posedge ACLK or negedge ARESETN) begin
+        if (!ARESETN) begin
+            read_channel_arbiter_gnt   <= 'd0;
+            read_channel_transfer_flag <= 'd0;
+        end else begin
+            if (S_AXI_ARCH_VALID_i && read_channel_ready) begin
+                read_channel_arbiter_gnt   <= mst_read_arbiter_gnt;
+                read_channel_transfer_flag <= 'b1;
+            end
+            if (M_AXI_ARVALID && M_AXI_ARREADY) begin
+                read_channel_transfer_flag <= 'b0;
             end
         end
     end
@@ -170,7 +190,7 @@ module axi_slave_router #(
         .ACLK      (ACLK),
         .ARESETN   (ARESETN),
         .requests_i(S_AXI_ARCH_VALID_i),
-        .arbiter_o (read_channel_arbiter_gnt)
+        .arbiter_o (mst_read_arbiter_gnt)
     );
 
     // AW-Channel mux
@@ -220,7 +240,7 @@ module axi_slave_router #(
         .DATA_WIDTH(AXI_ARCHAN_WIDTH),
         .PORT_NUM  (AXI_MASTER_PORT)
     ) axi_ar_mux (
-        .mux_ctrl_i (ar_chan_arboter_gnt),
+        .mux_ctrl_i (ar_chan_arbiter_gnt),
         .s_axi_dat_i(S_AXI_ARCH_i),
         .s_axi_vld_i(S_AXI_ARCH_VALID_i),
         .s_axi_rdy_o(S_AXI_ARCH_READY_o),
@@ -281,7 +301,7 @@ module axi_slave_router #(
     axi_id_decoder #(
         .AXI_ID_WIDTH(AXI_ID_WIDTH),
         .AXI_PORT_NUM(AXI_MASTER_PORT)
-    ) master_write_id (
+    ) master_write_id_decode (
         .id_i (mst_write_resp_decode_id),
         .gnt_o(mst_write_resp_decode_trgt)
     );
@@ -289,7 +309,7 @@ module axi_slave_router #(
     axi_id_decoder #(
         .AXI_ID_WIDTH(AXI_ID_WIDTH),
         .AXI_PORT_NUM(AXI_MASTER_PORT)
-    ) master_read_id (
+    ) master_read_id_decode (
         .id_i (mst_read_resp_decode_id),
         .gnt_o(mst_read_resp_decode_trgt)
     );

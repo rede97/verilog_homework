@@ -115,12 +115,14 @@ module axi_slave #(
     reg axi_wready;
     reg [1 : 0] axi_bresp;
     reg axi_bvalid;
+    reg [AXI_ID_WIDTH-1:0] axi_bid;
     reg [AXI_ADDR_WIDTH-1 : 0] axi_araddr;
     reg axi_arready;
     reg [AXI_DATA_WIDTH-1 : 0] axi_rdata;
     reg [1 : 0] axi_rresp;
     reg axi_rlast;
     reg axi_rvalid;
+    reg [AXI_ID_WIDTH-1:0] axi_rid;
     // aw_wrap_en determines wrap boundary and enables wrapping
     wire aw_wrap_en;
     // ar_wrap_en determines wrap boundary and enables wrapping
@@ -166,8 +168,8 @@ module axi_slave #(
     assign S_AXI_RRESP = axi_rresp;
     assign S_AXI_RLAST = axi_rlast;
     assign S_AXI_RVALID = axi_rvalid;
-    assign S_AXI_BID = S_AXI_AWID;
-    assign S_AXI_RID = S_AXI_ARID;
+    assign S_AXI_BID = axi_bid;
+    assign S_AXI_RID = axi_rid;
     assign aw_wrap_size = (AXI_DATA_WIDTH / 8 * (axi_awlen));
     assign ar_wrap_size = (AXI_DATA_WIDTH / 8 * (axi_arlen));
     assign aw_wrap_en = ((axi_awaddr & aw_wrap_size) == aw_wrap_size) ? 1'b1 : 1'b0;
@@ -211,6 +213,7 @@ module axi_slave #(
             axi_awlen_cntr <= 0;
             axi_awburst <= 0;
             axi_awlen <= 0;
+            axi_bid <= 0;
         end else begin
             if (~axi_awready && S_AXI_AWVALID && ~axi_awv_awr_flag) begin
                 // address latching
@@ -219,6 +222,8 @@ module axi_slave #(
                 axi_awlen <= S_AXI_AWLEN;
                 // start address of transfer
                 axi_awlen_cntr <= 0;
+                /// bid
+                axi_bid <= S_AXI_AWID;
             end else if ((axi_awlen_cntr <= axi_awlen) && S_AXI_WREADY && S_AXI_WVALID) begin
 
                 axi_awlen_cntr <= axi_awlen_cntr + 1;
@@ -337,6 +342,7 @@ module axi_slave #(
             axi_arburst <= 0;
             axi_arlen <= 0;
             axi_rlast <= 1'b0;
+            axi_rid <= 0;
         end else begin
             if (~axi_arready && S_AXI_ARVALID && ~axi_arv_arr_flag) begin
                 // address latching
@@ -346,6 +352,7 @@ module axi_slave #(
                 // start address of transfer
                 axi_arlen_cntr <= 0;
                 axi_rlast <= 1'b0;
+                axi_rid <= S_AXI_ARID;
             end else if ((axi_arlen_cntr <= axi_arlen) && axi_rvalid && S_AXI_RREADY) begin
 
                 axi_arlen_cntr <= axi_arlen_cntr + 1;
@@ -426,7 +433,7 @@ module axi_slave #(
         if (!S_AXI_ARESETN) begin
         end else begin
             if (reg_write_en) begin
-                $display("write [%0d<-%0d]: [0x%x] = 0x%x", AXI_SLAVE_ID, S_AXI_AWID, axi_awaddr,
+                $display("write [%0d<-%0d]: [0x%x] = 0x%x", AXI_SLAVE_ID, axi_bid, axi_awaddr,
                          S_AXI_WDATA);
             end else begin
             end
@@ -437,7 +444,7 @@ module axi_slave #(
         if (axi_rvalid) begin
             // Read address mux
             if (S_AXI_RREADY) begin
-                $display("read [%0d->%0d]: [0x%x] = 0x%x", AXI_SLAVE_ID, S_AXI_ARID, axi_araddr,
+                $display("read [%0d->%0d]: [0x%x] = 0x%x", AXI_SLAVE_ID, axi_rid, axi_araddr,
                          axi_rdata);
             end
             axi_rdata <= 'd0;
