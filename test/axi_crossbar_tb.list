@@ -1,0 +1,16 @@
+../test/axi_crossbar_tb.v
+../test/axi_master.v
+../test/axi_slave.v
+../rtl/sync_fifo.v
+../rtl/mux.v
+../rtl/demux.v
+../rtl/axis_mux.v
+../rtl/axis_demux.v
+../rtl/axi_w_misrouting.v
+../rtl/axi_r_misrouting.v
+../rtl/axi_slave_router.v
+../rtl/axi_master_router.v
+../rtl/axi_id_decoder.v
+../rtl/axi_crossbar.v
+../rtl/axi_crossbar_arbiter.v
+../rtl/axi_addr_decoder.v
