@@ -11,7 +11,7 @@ RUN_TARGETS = $(addsuffix .x, $(T))
 RUN_GUI_TARGETS = $(addsuffix .dve, $(T))
 VERDI_TARGETS = $(addsuffix .vd, $(T))
 
-VCS = vcs -full64 -LDFLAGS -Wl,--no-as-needed +nospeicy +notimingcheck
+VCS = vcs -full64 -LDFLAGS -Wl,--no-as-needed +nospeicy +notimingcheck -v2005
 
 print:
 	@echo "Build Targtes [$(TESTBENCHES)]"
